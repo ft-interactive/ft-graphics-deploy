@@ -1,4 +1,4 @@
 #! /usr/bin/env node
 
-require('dotenv').config();
+require('./setup.js');
 require('./dist/cli.js');

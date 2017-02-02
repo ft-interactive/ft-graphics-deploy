@@ -1,3 +1,5 @@
+// @flow
+
 import { cyan, grey } from 'chalk';
 
 export default (`

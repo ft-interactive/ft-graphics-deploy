@@ -6,6 +6,7 @@ import parseGitHubURL from 'parse-github-url';
 import input from 'input';
 import help from './help';
 import Deployer from './Deployer';
+import verifyGit from './verifyGit';
 
 (async () => {
   // use meow to parse CLI arguments
@@ -30,14 +31,7 @@ import Deployer from './Deployer';
 
   // unless provided, magically infer the variables that determine our deploy targets
   if (!options.projectName || !options.sha || !options.branchName) {
-    // first, ensure system git is v1.7 or higher
-    {
-      const gitVersion = (await execa.stdout('git', ['--version'])).replace(/^[^0-9]*/, '');
-
-      if (parseFloat(gitVersion) < 1.7) {
-        throw new Error(`Expected git version 32 or higher, but it was: "${gitVersion}"`);
-      }
-    }
+    await verifyGit();
 
     // infer the project name from the GitHub repo name
     if (!options.projectName) {
