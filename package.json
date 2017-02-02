@@ -50,7 +50,7 @@
     "dist",
     "src"
   ],
-  "repo": "ft-interactive/ft-graphics-deploy",
+  "repository": "ft-interactive/ft-graphics-deploy",
   "scripts": {
     "build": "del dist && babel src --out-dir dist --source-maps",
     "build:watch": "del dist && babel src --out-dir dist --source-maps --watch",
