@@ -20,10 +20,10 @@ import Deployer from './Deployer';
   // define our defaults - some of which come from environment variables
   const defaults = {
     localDir: 'dist',
-    awsKey: process.env.AWS_KEY,
-    awsSecret: process.env.AWS_SECRET,
-    bucketName: process.env.BUCKET_NAME,
-    awsRegion: process.env.AWS_REGION || 'eu-west-1',
+    awsKey: process.env.AWS_KEY_PROD,
+    awsSecret: process.env.AWS_SECRET_PROD,
+    bucketName: process.env.BUCKET_NAME_PROD,
+    awsRegion: process.env.AWS_REGION_PROD || 'eu-west-1',
   };
 
   const options = { ...defaults, ...cli.flags };

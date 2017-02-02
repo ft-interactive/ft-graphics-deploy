@@ -7,7 +7,8 @@ export default (`
   Graphics project repo in CI.`)}
   ${grey('────────────────────────────────────────────────────────────────────')}
   ${cyan('AWS settings')}
-  ${grey('If not provided, these settings are inherited from env vars ("AWS_KEY" etc.)')}
+  ${grey(`If not provided, these settings are taken from env vars
+  ("AWS_KEY_PROD", "AWS_SECRET_PROD", etc.)`)}
     --aws-key
     --aws-secret
     --aws-region
@@ -19,7 +20,8 @@ export default (`
     --sha - unique reference for this commit
     --branch-name
     --local-dir - what to upload; defaults to ./dist
-    --assets-prefix - base for asset URLs; affects the rev-manifest and HTML/CSS files
+    --assets-prefix - base for asset URLs; affects the rev-manifest and all
+                      HTML/CSS files
 
   ${cyan('Other')}
     --confirm - skip the confirmation dialogue
