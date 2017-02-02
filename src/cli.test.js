@@ -37,19 +37,17 @@ test('CLI deployment works', async (t) => {
     return;
   }
 
-  // check branch deploy
-  {
-    const response = await fetch(`http://${process.env.BUCKET_NAME_DEV}.s3-website-eu-west-1.amazonaws.com/v2/ft-graphics-deploy/test-fixture/master/`);
-    t.true(response.ok);
-    t.true(/it works/.test(await response.text()));
-  }
+  // check both targets got deployed
+  await Promise.resolve(['master', 'abcdefghijklmnop12345'].map(async (ref) => {
+    const htmlRes = await fetch(`http://${process.env.BUCKET_NAME_DEV}.s3-website-eu-west-1.amazonaws.com/v2/ft-graphics-deploy/test-fixture/${ref}/`);
+    t.true(htmlRes.ok);
+    t.true(/it works/.test(await htmlRes.text()));
 
-  // check sha deploy
-  {
-    const response = await fetch(`http://${process.env.BUCKET_NAME_DEV}.s3-website-eu-west-1.amazonaws.com/v2/ft-graphics-deploy/test-fixture/abcdefghijklmnop12345/`);
-    t.true(response.ok);
-    t.true(/it works/.test(await response.text()));
-  }
+    const revManifestRes = await fetch(`http://${process.env.BUCKET_NAME_DEV}.s3-website-eu-west-1.amazonaws.com/v2/ft-graphics-deploy/test-fixture/${ref}/rev-manifest.json`);
+    t.true(revManifestRes.ok);
 
-  t.pass();
+    t.deepEqual(await t.json(revManifestRes), {
+      'foo.js': 'http://example.com/assets/foo.abc123.js',
+    });
+  }));
 });

@@ -84,12 +84,5 @@ import verifyGit from './verifyGit';
   // deploy!
   await deployer.execute();
 
-  // report success
-  // if (options.sha) {
-  //   console.log(cyan(`Permanent link to this commit:\n http://${options.bucketName}.s3-website-eu-west-1.amazonaws.com/v2/${options.projectName}/${options.sha}`));
-  // }
-  //
-  // if (options.branchName) {
-  //   console.log(cyan(`Branch deployed:\n http://${options.bucketName}.s3-website-eu-west-1.amazonaws.com/v2/${options.projectName}/${options.sha}`));
-  // }
+  console.log('Deployment complete.');
 })();

@@ -104,10 +104,10 @@ export default class Deployer extends EventEmitter {
         },
 
         getS3Params: (localFile, stat, callback) => {
+          const relativeLocalFile = path.relative(localDir, path.resolve(localFile));
+
           // skip this file if it's not in the rev manifest
-          // TODO do we need to make path relative?
-          console.log('localFile', localFile);
-          if (revvedFiles.indexOf(localFile) === -1) {
+          if (revvedFiles.indexOf(relativeLocalFile) === -1) {
             callback(null, null);
             return;
           }
@@ -151,7 +151,9 @@ export default class Deployer extends EventEmitter {
         },
 
         getS3Params: (localFile, stat, callback) => {
-          if (localFile === REV_MANIFEST_FILENAME) { // TODO relativize?
+          const relativeLocalFile = path.relative(localDir, path.resolve(localFile));
+
+          if (relativeLocalFile === REV_MANIFEST_FILENAME) {
             callback(null, null);
           }
 
@@ -161,7 +163,7 @@ export default class Deployer extends EventEmitter {
           fileParams.CacheControl = 'max-age=60';
 
           // use text/html for extensionless files (similar to gh-pages)
-          if (path.extname(localFile) === '') fileParams.ContentType = 'text/html';
+          if (path.extname(relativeLocalFile) === '') fileParams.ContentType = 'text/html';
 
           callback(null, fileParams);
         },
@@ -181,6 +183,12 @@ export default class Deployer extends EventEmitter {
         if (revManifest) {
           const manifestUploader = client.uploadFile({
             localFile: revManifestTmpPath,
+
+            s3Params: {
+              Bucket: bucketName,
+              ACL: 'public-read',
+              Key: `v2/${projectName}/${target}/${REV_MANIFEST_FILENAME}`,
+            },
           });
 
           uploader.on('error', (error) => {
