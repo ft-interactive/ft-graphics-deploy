@@ -37,14 +37,14 @@
     "eslint-plugin-import": "^2.2.0",
     "flow-bin": "^0.38.0"
   },
-  "files": [
-    "dist",
-    "cli.js"
-  ],
   "engines": {
     "node": ">=7.5",
     "yarn": ">=0.20.0"
   },
+  "files": [
+    "dist",
+    "cli.js"
+  ],
   "repo": "ft-interactive/ft-graphics-deploy",
   "scripts": {
     "build": "del dist && babel src --out-dir dist --source-maps",
