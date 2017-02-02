@@ -46,8 +46,9 @@
     "yarn": ">=0.20.0"
   },
   "files": [
+    "cli.js",
     "dist",
-    "cli.js"
+    "src"
   ],
   "repo": "ft-interactive/ft-graphics-deploy",
   "scripts": {
