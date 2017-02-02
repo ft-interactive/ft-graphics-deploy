@@ -3,6 +3,7 @@
 import meow from 'meow';
 import execa from 'execa';
 import parseGitHubURL from 'parse-github-url';
+import { cyan, green } from 'chalk';
 import input from 'input';
 import help from './help';
 import Deployer from './Deployer';
@@ -84,5 +85,14 @@ import verifyGit from './verifyGit';
   // deploy!
   await deployer.execute();
 
-  console.log('Deployment complete.');
+  // report result
+  console.log(green('Deployment complete.'));
+
+  if (options.sha) {
+    console.log(cyan(`  http://<BUCKET_NAME>.s3-website-${options.awsRegion}.amazonaws.com/v2/${options.projectName}/${options.sha}/`));
+  }
+
+  if (options.branchName) {
+    console.log(cyan(`  http://<BUCKET_NAME>.s3-website-${options.awsRegion}.amazonaws.com/v2/${options.projectName}/${options.branchName}/`));
+  }
 })();
