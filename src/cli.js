@@ -89,10 +89,10 @@ import verifyGit from './verifyGit';
   console.log(green('Deployment complete.'));
 
   if (options.sha) {
-    console.log(cyan(`  http://<BUCKET_NAME>.s3-website-${options.awsRegion}.amazonaws.com/v2/${options.projectName}/${options.sha}/`));
+    console.log(cyan(`  http://${options.bucketName}.s3-website-${options.awsRegion}.amazonaws.com/v2/${options.projectName}/${options.sha}/`));
   }
 
   if (options.branchName) {
-    console.log(cyan(`  http://<BUCKET_NAME>.s3-website-${options.awsRegion}.amazonaws.com/v2/${options.projectName}/${options.branchName}/`));
+    console.log(cyan(`  http://${options.bucketName}.s3-website-${options.awsRegion}.amazonaws.com/v2/${options.projectName}/${options.branchName}/`));
   }
 })();
