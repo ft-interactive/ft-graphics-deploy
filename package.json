@@ -15,7 +15,7 @@
   },
   "bin": "cli.js",
   "dependencies": {
-    "babel-runtime": "^6.22.0",
+    "babel-runtime": "^6.23.0",
     "chalk": "^1.1.3",
     "dotenv": "^4.0.0",
     "execa": "^0.6.0",
@@ -27,18 +27,18 @@
     "tmp-promise": "^1.0.3"
   },
   "devDependencies": {
-    "ava": "^0.17.0",
-    "babel-cli": "^6.22.2",
+    "ava": "^0.18.2",
+    "babel-cli": "^6.23.0",
     "babel-eslint": "^7.1.1",
     "babel-plugin-transform-flow-strip-types": "^6.22.0",
-    "babel-plugin-transform-runtime": "^6.22.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.1.8",
     "babel-preset-stage-0": "^6.22.0",
     "del-cli": "^0.2.1",
-    "eslint": "^3.14.1",
-    "eslint-config-airbnb-base": "^11.0.1",
+    "eslint": "^3.16.0",
+    "eslint-config-airbnb-base": "^11.1.0",
     "eslint-plugin-import": "^2.2.0",
-    "flow-bin": "^0.38.0",
+    "flow-bin": "^0.39.0",
     "node-fetch": "^1.6.3"
   },
   "engines": {
