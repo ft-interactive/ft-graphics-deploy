@@ -17,7 +17,9 @@ type DeployerOptions = {
   sha: ?string,
   branchName: ?string,
 
-  assetsPrefix: string, // e.g. "https://example.com/v2-assets/"
+  preview: boolean,
+
+  assetsPrefix: string, // e.g. "https://example.com/v2/__assets/"
 };
 
 type RevManifest = {
@@ -44,6 +46,7 @@ export default class Deployer extends EventEmitter {
       awsRegion,
       sha,
       branchName,
+      preview,
       assetsPrefix,
     } = this.options;
 
@@ -146,7 +149,7 @@ export default class Deployer extends EventEmitter {
 
         s3Params: {
           Bucket: bucketName,
-          Prefix: `v2/${projectName}/${target}/`,
+          Prefix: `v2${preview ? '-preview' : ''}/${projectName}/${target}/`,
           ACL: 'public-read',
         },
 
@@ -187,7 +190,7 @@ export default class Deployer extends EventEmitter {
             s3Params: {
               Bucket: bucketName,
               ACL: 'public-read',
-              Key: `v2/${projectName}/${target}/${REV_MANIFEST_FILENAME}`,
+              Key: `v2${preview ? '-preview' : ''}/${projectName}/${target}/${REV_MANIFEST_FILENAME}`,
             },
           });
 

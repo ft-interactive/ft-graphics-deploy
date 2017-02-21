@@ -22,6 +22,7 @@ export default (`
     --sha - unique reference for this commit
     --branch-name
     --local-dir - what to upload; defaults to ./dist
+    --preview - upload files to preview folder
     --assets-prefix - base for asset URLs; affects the rev-manifest and all
                       HTML/CSS files
 
