@@ -26,6 +26,7 @@ import verifyGit from './verifyGit';
     awsSecret: process.env.AWS_SECRET_PROD,
     bucketName: process.env.BUCKET_NAME_PROD,
     awsRegion: process.env.AWS_REGION_PROD || 'eu-west-1',
+    preview: false,
   };
 
   const options = { ...defaults, ...cli.flags };
@@ -69,7 +70,8 @@ import verifyGit from './verifyGit';
     `  project name: ${options.projectName}\n` +
     `  sha: ${options.sha}\n` +
     `  branch name: ${options.branchName}\n` +
-    `  assets prefix: ${options.assetsPrefix}\n`,
+    `  assets prefix: ${options.assetsPrefix}\n` +
+    `  preview: ${options.preview}`,
   );
 
   // ask for confirmation
@@ -89,10 +91,10 @@ import verifyGit from './verifyGit';
   console.log(green('Deployment complete.'));
 
   if (options.sha) {
-    console.log(cyan(`  http://${options.bucketName}.s3-website-${options.awsRegion}.amazonaws.com/v2/${options.projectName}/${options.sha}/`));
+    console.log(cyan(`  http://${options.bucketName}.s3-website-${options.awsRegion}.amazonaws.com/v2${options.preview ? '-preview' : ''}/${options.projectName}/${options.sha}/`));
   }
 
   if (options.branchName) {
-    console.log(cyan(`  http://${options.bucketName}.s3-website-${options.awsRegion}.amazonaws.com/v2/${options.projectName}/${options.branchName}/`));
+    console.log(cyan(`  http://${options.bucketName}.s3-website-${options.awsRegion}.amazonaws.com/v2${options.preview ? '-preview' : ''}/${options.projectName}/${options.branchName}/`));
   }
 })();
