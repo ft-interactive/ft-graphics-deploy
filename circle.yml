@@ -15,4 +15,6 @@ dependencies:
 
 test:
   override:
+    - yarn verify
+    - yarn build
     - yarn test

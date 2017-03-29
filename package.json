@@ -54,10 +54,8 @@
   "repository": "ft-interactive/ft-graphics-deploy",
   "scripts": {
     "build": "del dist && babel src --out-dir dist --source-maps",
-    "build:watch": "del dist && babel src --out-dir dist --source-maps --watch",
     "prepublish": "yarn run build",
-    "start": "node dist/server.js",
-    "test": "flow && eslint . && yarn run build && ava",
-    "test:watch": "ava --watch"
+    "verify": "flow && eslint .",
+    "test": "ava"
   }
 }

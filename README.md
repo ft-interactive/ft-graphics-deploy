@@ -43,7 +43,7 @@ Clone this repo and run `yarn` to install dependencies.
 
 Add a `.env` file that defines `AWS_KEY_DEV`, `AWS_SECRET_DEV`, `AWS_REGION_DEV` and `BUCKET_NAME_DEV`. (These are used in tests.)
 
-Run `yarn build:watch` and `yarn test:watch` in separate terminal tabs while developing. (The first one watches `src` and builds to `dist`. The second one runs ava tests in `dist`.
+Run `yarn build -- --watch` and `yarn test -- --watch` in separate terminal tabs while developing. (The first one watches `src` and builds to `dist`. The second one runs ava tests in `dist`.)
 
 To publish to npm: bump the version (e.g. `npm version patch`) and do `yarn build && npm publish`. You'll need privileges. (TO DO: auto-publish from Circle.)
 
