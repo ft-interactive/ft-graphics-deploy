@@ -23,18 +23,20 @@ $ ft-graphics-deploy --help
     --bucket-name
 
   Upload settings
-  If not provided, these are deduced from the git situation in the CWD.
+  If not provided, these are deduced from the git status in the CWD.
     --project-name
     --sha - unique reference for this commit
-    --branch-name
+    --branch-name - name of the branch you are deploying
     --local-dir - what to upload; defaults to ./dist
     --preview - upload files to preview folder
     --assets-prefix - base for asset URLs; affects the rev-manifest and all
                       HTML/CSS files
 
   Other
-    --confirm - skip the confirmation dialogue
     --help - show this help and exit
+    --get-branch-url - instead of deploying, just print the URL it would deploy to
+    --get-commit-url - as above, but get the commit-specific URL
+    --confirm - skip the confirmation dialogue when deploying
 ```
 
 ## Development
@@ -43,7 +45,7 @@ Clone this repo and run `yarn` to install dependencies.
 
 Add a `.env` file that defines `AWS_KEY_DEV`, `AWS_SECRET_DEV`, `AWS_REGION_DEV` and `BUCKET_NAME_DEV`. (These are used in tests.)
 
-Run `yarn build:watch` and `yarn test:watch` in separate terminal tabs while developing. (The first one watches `src` and builds to `dist`. The second one runs ava tests in `dist`.
+Run `yarn build -- --watch` and `yarn test -- --watch` in separate terminal tabs while developing. (The first one watches `src` and builds to `dist`. The second one runs ava tests in `dist`.)
 
 To publish to npm: bump the version (e.g. `npm version patch`) and do `yarn build && npm publish`. You'll need privileges. (TO DO: auto-publish from Circle.)
 

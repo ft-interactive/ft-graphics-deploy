@@ -9,6 +9,10 @@ import help from './help';
 import Deployer from './Deployer';
 import verifyGit from './verifyGit';
 
+const getURL = (options, urlType: 'sha' | 'branchName') =>
+  `http://${options.bucketName}.s3-website-${options.awsRegion}.amazonaws.com/v2${options.preview ? '-preview' : ''}/${options.projectName}/${options[urlType]}/`
+;
+
 (async () => {
   // use meow to parse CLI arguments
   const cli = meow({
@@ -61,7 +65,14 @@ import verifyGit from './verifyGit';
     }
   }
 
-  // TODO validate options
+  // TODO validate options and exit with helpful message if necessary
+
+  // handle special --get-branch-url or --get-commit-url use cases
+  if (options.getBranchUrl || options.getCommitUrl) {
+    process.stdout.write(getURL(options, options.getBranchUrl ? 'branchName' : 'sha'));
+
+    process.exit();
+  }
 
   // report options (except secrets)
   console.log(
@@ -91,10 +102,10 @@ import verifyGit from './verifyGit';
   console.log(green('Deployment complete.'));
 
   if (options.sha) {
-    console.log(cyan(`  http://${options.bucketName}.s3-website-${options.awsRegion}.amazonaws.com/v2${options.preview ? '-preview' : ''}/${options.projectName}/${options.sha}/`));
+    console.log(cyan(`  ${getURL(options, 'sha')}`));
   }
 
   if (options.branchName) {
-    console.log(cyan(`  http://${options.bucketName}.s3-website-${options.awsRegion}.amazonaws.com/v2${options.preview ? '-preview' : ''}/${options.projectName}/${options.branchName}/`));
+    console.log(cyan(`  ${getURL(options, 'branchName')}`));
   }
 })();
