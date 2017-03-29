@@ -23,18 +23,20 @@ $ ft-graphics-deploy --help
     --bucket-name
 
   Upload settings
-  If not provided, these are deduced from the git situation in the CWD.
+  If not provided, these are deduced from the git status in the CWD.
     --project-name
     --sha - unique reference for this commit
-    --branch-name
+    --branch-name - name of the branch you are deploying
     --local-dir - what to upload; defaults to ./dist
     --preview - upload files to preview folder
     --assets-prefix - base for asset URLs; affects the rev-manifest and all
                       HTML/CSS files
 
   Other
-    --confirm - skip the confirmation dialogue
     --help - show this help and exit
+    --get-branch-url - instead of deploying, just print the URL it would deploy to
+    --get-commit-url - as above, but get the commit-specific URL
+    --confirm - skip the confirmation dialogue when deploying
 ```
 
 ## Development
