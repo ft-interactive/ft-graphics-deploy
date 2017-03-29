@@ -47,12 +47,6 @@ Add a `.env` file that defines `AWS_KEY_DEV`, `AWS_SECRET_DEV`, `AWS_REGION_DEV`
 
 Run `yarn build -- --watch` and `yarn test -- --watch` in separate terminal tabs while developing. (The first one watches `src` and builds to `dist`. The second one runs ava tests in `dist`.)
 
-To publish to npm: bump the version (e.g. `npm version patch`) and do `yarn build && npm publish`. You'll need privileges. (TO DO: auto-publish from Circle.)
-
-<!-- badge URLs -->
-[circle-url]: https://circleci.com/gh/ft-interactive/ft-graphics-deploy
-[circle-image]: https://circleci.com/gh/ft-interactive/ft-graphics-deploy.svg?style=svg
-
 ### Publishing a new version to npm
 
 - Make sure you're on master: `git checkout master`
@@ -61,3 +55,7 @@ To publish to npm: bump the version (e.g. `npm version patch`) and do `yarn buil
 - Push to GitHub: `git push && git push --tags`
 
 CircleCI will do the rest.
+
+<!-- badge URLs -->
+[circle-url]: https://circleci.com/gh/ft-interactive/ft-graphics-deploy
+[circle-image]: https://circleci.com/gh/ft-interactive/ft-graphics-deploy.svg?style=svg
