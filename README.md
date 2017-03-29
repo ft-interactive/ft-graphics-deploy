@@ -52,3 +52,12 @@ To publish to npm: bump the version (e.g. `npm version patch`) and do `yarn buil
 <!-- badge URLs -->
 [circle-url]: https://circleci.com/gh/ft-interactive/ft-graphics-deploy
 [circle-image]: https://circleci.com/gh/ft-interactive/ft-graphics-deploy.svg?style=svg
+
+### Publishing a new version to npm
+
+- Make sure you're on master: `git checkout master`
+- Update the version: `npm version patch` (or replace `patch` with `minor` or `major` as appropriate)
+  - This updates package.json, commits this single-line change, and creates a new git tag
+- Push to GitHub: `git push && git push --tags`
+
+CircleCI will do the rest.
