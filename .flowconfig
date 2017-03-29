@@ -1,4 +1,7 @@
 [ignore]
+# pending https://github.com/facebook/flow/issues/869
+.*/node_modules/config-chain/test/broken.json
+.*/node_modules/npm/test/fixtures/config/package.json
 
 [include]
 
