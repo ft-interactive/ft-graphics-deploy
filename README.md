@@ -1,4 +1,4 @@
-# ft-graphics-deploy [![Build Status][circle-image]][circle-url]
+# ft-graphics-deploy [![Build Status][circle-image]][circle-url] [![npm](https://img.shields.io/npm/v/ft-graphics-deploy.svg)](https://npmjs.com/package/ft-graphics-deploy)
 
 CLI for deploying built static websites to an S3 bucket.
 
