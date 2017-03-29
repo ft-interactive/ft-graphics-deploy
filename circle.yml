@@ -18,3 +18,10 @@ test:
     - yarn run verify
     - yarn run build
     - yarn test
+
+deployment:
+  npm:
+    branch: master
+    commands:
+      - echo -e "$NPM_USERNAME\n$NPM_PASSWORD\n$NPM_EMAIL" | npm login
+      - ./node_modules/.bin/publish
