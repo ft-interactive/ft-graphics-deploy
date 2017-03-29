@@ -15,9 +15,7 @@ dependencies:
 
 test:
   override:
-    - yarn run verify
-    - yarn run build
-    - yarn test
+    - yarn run verify && yarn run build && yarn test
 
 deployment:
   npm:
