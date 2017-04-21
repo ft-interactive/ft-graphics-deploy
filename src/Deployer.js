@@ -14,12 +14,12 @@ type DeployerOptions = {
   bucketName: string,
 
   projectName: string,
-  sha: ?string,
-  branchName: ?string,
+  sha?: string,
+  branchName?: string,
 
   preview: boolean,
 
-  assetsPrefix: string, // e.g. "https://example.com/v2/__assets/"
+  assetsPrefix?: string, // e.g. "https://example.com/v2/__assets/"
 };
 
 type RevManifest = {
@@ -63,6 +63,10 @@ export default class Deployer extends EventEmitter {
     // save an altered version of the rev manifest, if any
     let revManifestTmpPath: string;
     if (revManifest) {
+      if (typeof assetsPrefix !== 'string') {
+        throw new Error('Expected assetsPrefix to be defined if revManifest is being used');
+      }
+
       const tmpFileDetails: {
         fd: mixed, // file descriptor
         path: string,

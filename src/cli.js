@@ -9,15 +9,15 @@ import help from './help';
 import Deployer from './Deployer';
 import verifyGit from './verifyGit';
 
-const getURL = (options, urlType: 'sha' | 'branchName') =>
-  `http://${options.bucketName}.s3-website-${options.awsRegion}.amazonaws.com/v2${options.preview ? '-preview' : ''}/${options.projectName}/${options[urlType]}/`
-;
+const getURL = (options, urlType: 'sha' | 'branchName') => (
+  `http://${options.bucketName}.s3-website-${options.awsRegion}.amazonaws.com/v2${
+    options.preview ? '-preview' : ''
+  }/${options.projectName}/${options[urlType]}/`
+);
 
 (async () => {
   // use meow to parse CLI arguments
-  const cli = meow({
-    help,
-  }, {
+  const cli = meow({ help }, {
     alias: {
       h: 'help',
     },
@@ -65,7 +65,11 @@ const getURL = (options, urlType: 'sha' | 'branchName') =>
     }
   }
 
-  // TODO validate options and exit with helpful message if necessary
+  // validate options
+  if (!options.bucketName) throw new Error('bucketName not set');
+  if (!options.awsRegion) throw new Error('awsRegion not set');
+  if (!options.sha) throw new Error('sha not set');
+  if (!options.branchName) throw new Error('branchName not set');
 
   // handle special --get-branch-url or --get-commit-url use cases
   if (options.getBranchUrl || options.getCommitUrl) {
