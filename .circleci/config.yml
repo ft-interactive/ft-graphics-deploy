@@ -8,7 +8,9 @@ jobs:
       - checkout
       - restore_cache:
           key: node_modules-{{ checksum "yarn.lock" }}
-      - run: yarn
+      - run:
+          name: Install dependencies
+          command: yarn --pure-lockfile
       - save_cache:
           key: node_modules-{{ checksum "yarn.lock" }}
           paths:
