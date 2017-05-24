@@ -78,13 +78,18 @@ const getURL = (options, urlType: 'sha' | 'branchName') => (
     process.exit();
   }
 
+  // convert "sha' and "branchName" options into an array of targets
+  options.targets = [options.branchName, options.sha];
+  delete options.branchName;
+  delete options.sha;
+
   // report options (except secrets)
   console.log(
     '\nOptions:\n' +
     `  local dir: ${options.localDir}\n` +
     `  project name: ${options.projectName}\n` +
-    `  sha: ${options.sha}\n` +
-    `  branch name: ${options.branchName}\n` +
+    `  branch name: ${options.targets[0]}\n` +
+    `  sha: ${options.targets[1]}\n` +
     `  assets prefix: ${options.assetsPrefix}\n` +
     `  preview: ${options.preview}`,
   );
@@ -96,8 +101,6 @@ const getURL = (options, urlType: 'sha' | 'branchName') => (
 
   // construct our deployer
   const deployer = new Deployer(options);
-
-  // TODO: listen to events and show progress
 
   // deploy!
   await deployer.execute();

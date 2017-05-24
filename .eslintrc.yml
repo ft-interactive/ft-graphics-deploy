@@ -4,3 +4,4 @@ parser: babel-eslint
 rules:
   import/no-extraneous-dependencies: [2, { devDependencies: ['**/*.test.js', 'fixtures/**'] }]
   no-console: 0
+  max-len: 0

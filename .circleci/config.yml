@@ -1,0 +1,35 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/project
+    docker:
+      - image: node:7
+    steps:
+      - checkout
+      - restore_cache:
+          key: node_modules-{{ checksum "yarn.lock" }}
+      - run:
+          name: Install dependencies
+          command: yarn --pure-lockfile
+      - save_cache:
+          key: node_modules-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules/
+      - run:
+          name: ESLint
+          command: yarn run eslint -- .
+      - run:
+          name: Compile with babel
+          command: yarn run build
+      - run:
+          name: AVA tests
+          command: yarn run ava
+      - store_artifacts:
+          path: dist/
+      - deploy:
+          name: Maybe publish to npm
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              echo -e "$NPM_USERNAME\n$NPM_PASSWORD\n$NPM_EMAIL" | npm login
+              ./node_modules/.bin/publish
+            fi
