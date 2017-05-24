@@ -18,7 +18,7 @@ export type DeployerOptions = {
 
   targets: Array<string>, // for reference, the CLI provides two targets: the commit sha and branch name
 
-  preview: boolean,
+  preview?: boolean,
 
   maxAge?: number, // for everything except revved assets
 
@@ -214,5 +214,23 @@ export default class Deployer extends EventEmitter {
     })));
 
     await Promise.all([uploadedAssets, uploadedBundles]);
+
+    return this.getURLs();
+  }
+
+  /**
+   * Returns the base URLs that this deployer would deploy to.
+   */
+  getURLs() {
+    const {
+      bucketName,
+      projectName,
+      awsRegion,
+      targets,
+    } = this.options;
+
+    return targets.map(target => (
+      `http://${bucketName}.s3-website-${awsRegion}.amazonaws.com/v2/${projectName}/${target}/`
+    ));
   }
 }

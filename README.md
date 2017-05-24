@@ -50,8 +50,8 @@ The most straightforward way:
 ```js
 import deploy from 'ft-graphics-deploy';
 
-deploy(options).then(() => {
-  // done
+deploy(options).then((baseURLs) => {
+  console.log('uploaded to:', baseURLs);
 });
 ```
 
@@ -62,8 +62,8 @@ import { Deployer } from 'ft-graphics-deploy';
 
 const deployer = new Deployer(options);
 
-deployer.execute().then(() => {
-  // done
+deployer.execute().then((baseURLs) => {
+  console.log('uploaded to:', baseURLs);
 });
 ```
 
