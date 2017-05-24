@@ -6,18 +6,21 @@ import path from 'path';
 import s3 from 's3';
 import tmp from 'tmp-promise';
 
-type DeployerOptions = {
-  localDir: string,
+export type DeployerOptions = {
+  localDir: string, // e.g. '/path/to/dist'
+
   awsKey: string,
   awsSecret: string,
   awsRegion: string,
   bucketName: string,
 
-  projectName: string,
-  sha?: string,
-  branchName?: string,
+  projectName: string, // usually in the form 'ft-interactive/some-project'
+
+  targets: Array<string>, // for reference, the CLI provides two targets: the commit sha and branch name
 
   preview: boolean,
+
+  maxAge?: number, // for everything except revved assets
 
   assetsPrefix?: string, // e.g. "https://example.com/v2/__assets/"
 };
@@ -44,10 +47,10 @@ export default class Deployer extends EventEmitter {
       awsKey,
       awsSecret,
       awsRegion,
-      sha,
-      branchName,
+      targets,
       preview,
       assetsPrefix,
+      maxAge,
     } = this.options;
 
     // load in the rev-manifest
@@ -135,15 +138,11 @@ export default class Deployer extends EventEmitter {
 
       uploader.on('end', () => {
         this.emit('uploaded', {
-          what: 'assets',
+          info: 'assets',
         });
         resolve();
       });
     });
-
-    const targets = [];
-    if (sha) targets.push(sha);
-    if (branchName) targets.push(branchName);
 
     const uploadedBundles = Promise.all(targets.map(target => new Promise((resolve, reject) => {
       const uploader = client.uploadDir({
@@ -166,8 +165,8 @@ export default class Deployer extends EventEmitter {
 
           const fileParams = {};
 
-          // set long-term cache headers, as it's a revved asset
-          fileParams.CacheControl = 'max-age=60';
+          // set cache headers
+          fileParams.CacheControl = `max-age=${typeof maxAge === 'number' ? maxAge : 60}`;
 
           // use text/html for extensionless files (similar to gh-pages)
           if (path.extname(relativeLocalFile) === '') fileParams.ContentType = 'text/html';
@@ -183,7 +182,7 @@ export default class Deployer extends EventEmitter {
 
       uploader.on('end', () => {
         this.emit('uploaded', {
-          what: `${target} (bundle)`,
+          info: `${target} (bundle)`,
         });
 
         // finally, upload the modifed rev manifest
@@ -205,7 +204,7 @@ export default class Deployer extends EventEmitter {
 
           manifestUploader.on('end', () => {
             this.emit('uploaded', {
-              what: `${target} (modified rev-manifest)`,
+              info: `${target} (modified rev-manifest)`,
             });
 
             resolve();

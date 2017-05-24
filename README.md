@@ -2,7 +2,11 @@
 
 CLI for deploying built static websites to an S3 bucket.
 
-## Usage
+## How to use
+
+Requires Node 7.10 or higher.
+
+### Command line usage
 
 ```
 $ ft-graphics-deploy --help
@@ -38,6 +42,32 @@ $ ft-graphics-deploy --help
     --get-commit-url - as above, but get the commit-specific URL
     --confirm - skip the confirmation dialogue when deploying
 ```
+
+## JavaScript API
+
+The most straightforward way:
+
+```js
+import deploy from 'ft-graphics-deploy';
+
+deploy(options).then(() => {
+  // done
+});
+```
+
+For more fine-grained control:
+
+```js
+import { Deployer } from 'ft-graphics-deploy';
+
+const deployer = new Deployer(options);
+
+deployer.execute().then(() => {
+  // done
+});
+```
+
+The JavaScript API does **not** do any git-sniffing or use any environment variables to configure the deployment – you must pass in all required options manually. See the [Deployer class](./src/Deployer.js) source for the full options.
 
 ## Development
 
