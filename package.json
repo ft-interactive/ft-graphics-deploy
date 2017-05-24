@@ -45,8 +45,7 @@
     "publish": "^0.6.0"
   },
   "engines": {
-    "node": ">=7.10",
-    "yarn": ">=0.24.5"
+    "node": ">=7.10"
   },
   "files": [
     "cli.js",
