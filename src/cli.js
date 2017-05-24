@@ -9,12 +9,6 @@ import help from './help';
 import Deployer from './Deployer';
 import verifyGit from './verifyGit';
 
-const getURL = (options, urlType: 'sha' | 'branchName') => (
-  `http://${options.bucketName}.s3-website-${options.awsRegion}.amazonaws.com/v2${
-    options.preview ? '-preview' : ''
-  }/${options.projectName}/${options[urlType]}/`
-);
-
 (async () => {
   // use meow to parse CLI arguments
   const cli = meow({ help }, {
@@ -71,17 +65,19 @@ const getURL = (options, urlType: 'sha' | 'branchName') => (
   if (!options.sha) throw new Error('sha not set');
   if (!options.branchName) throw new Error('branchName not set');
 
-  // handle special --get-branch-url or --get-commit-url use cases
-  if (options.getBranchUrl || options.getCommitUrl) {
-    process.stdout.write(getURL(options, options.getBranchUrl ? 'branchName' : 'sha'));
-
-    process.exit();
-  }
-
   // convert "sha' and "branchName" options into an array of targets
   options.targets = [options.branchName, options.sha];
   delete options.branchName;
   delete options.sha;
+
+  // construct our deployer
+  const deployer = new Deployer(options);
+
+  // handle special --get-branch-url or --get-commit-url use cases
+  if (options.getBranchUrl || options.getCommitUrl) {
+    process.stdout.write(deployer.getURLs()[options.getBranchUrl ? 0 : 1]);
+    process.exit();
+  }
 
   // report options (except secrets)
   console.log(
@@ -99,20 +95,13 @@ const getURL = (options, urlType: 'sha' | 'branchName') => (
     process.exit();
   }
 
-  // construct our deployer
-  const deployer = new Deployer(options);
-
   // deploy!
-  await deployer.execute();
+  const urls = await deployer.execute();
 
   // report result
   console.log(green('Deployment complete.'));
 
-  if (options.sha) {
-    console.log(cyan(`  ${getURL(options, 'sha')}`));
-  }
-
-  if (options.branchName) {
-    console.log(cyan(`  ${getURL(options, 'branchName')}`));
-  }
+  urls.forEach((url) => {
+    console.log(cyan(`  ${url}`));
+  });
 })();
