@@ -30,10 +30,11 @@
     "ava": "^0.19.1",
     "babel-cli": "^6.24.1",
     "babel-eslint": "^7.2.3",
+    "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-flow-strip-types": "^6.22.0",
+    "babel-plugin-transform-object-rest-spread": "^6.23.0",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.5.1",
-    "babel-preset-stage-0": "^6.24.1",
     "del-cli": "^1.0.0",
     "eslint": "^3.19.0",
     "eslint-config-airbnb-base": "^11.2.0",
@@ -44,8 +45,8 @@
     "publish": "^0.6.0"
   },
   "engines": {
-    "node": ">=7.5",
-    "yarn": ">=0.19.1"
+    "node": ">=7.10",
+    "yarn": ">=0.24.5"
   },
   "files": [
     "cli.js",
@@ -53,10 +54,10 @@
     "dist",
     "src"
   ],
+  "main": "dist",
   "repository": "ft-interactive/ft-graphics-deploy",
   "scripts": {
     "build": "del dist && babel src --out-dir dist --source-maps",
-    "prepublish": "yarn run build",
     "verify": "flow && eslint .",
     "test": "ava"
   }

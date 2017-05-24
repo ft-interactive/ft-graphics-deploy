@@ -4,14 +4,17 @@
       "env",
       {
         "targets": {
-          "node": 7.5
-        }
+          "node": "7.10"
+        },
+        "useBuiltIns": true
       }
-    ],
-    "stage-0"
+    ]
   ],
   "plugins": [
     "transform-flow-strip-types",
-    "transform-runtime"
+    ["transform-object-rest-spread", {
+      "useBuiltIns": true
+    }],
+    "transform-class-properties"
   ]
 }
