@@ -1,7 +1,7 @@
 {
   "name": "ft-graphics-deploy",
   "description": "CLI for deploying FT Graphics projects",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "ava": {
     "babel": {},
     "files": "dist/**/*.test.js",
