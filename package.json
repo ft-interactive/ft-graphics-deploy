@@ -53,6 +53,7 @@
     "dist",
     "src"
   ],
+  "license": "MIT",
   "main": "dist",
   "repository": "ft-interactive/ft-graphics-deploy",
   "scripts": {
