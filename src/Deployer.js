@@ -227,10 +227,11 @@ export default class Deployer extends EventEmitter {
       projectName,
       awsRegion,
       targets,
+      preview,
     } = this.options;
 
     return targets.map(target => (
-      `http://${bucketName}.s3-website-${awsRegion}.amazonaws.com/v2/${projectName}/${target}/`
+      `http://${bucketName}.s3-website-${awsRegion}.amazonaws.com/v2${preview ? '-preview' : ''}/${projectName}/${target}/`
     ));
   }
 }
