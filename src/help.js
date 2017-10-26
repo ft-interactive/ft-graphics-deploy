@@ -2,7 +2,7 @@
 
 import { cyan, grey } from 'chalk';
 
-export default (`
+export default `
   ${grey('>')} ft-graphics-deploy ${grey('[FLAGS...]')}
   ${grey('────────────────────────────────────────────────────────────────────')}
   ${grey(`All flags are optional when this command is run from a typical FT
@@ -31,4 +31,4 @@ export default (`
     --get-branch-url - instead of deploying, just print the URL it would deploy to
     --get-commit-url - as above, but get the commit-specific URL
     --confirm - skip the confirmation dialogue when deploying
-`);
+`;

@@ -14,20 +14,32 @@ test('CLI help works', async (t) => {
 });
 
 test('CLI deployment works', async (t) => {
-  const child = execa(cliPath, [
-    '--aws-key', process.env.AWS_KEY_DEV,
-    '--aws-secret', process.env.AWS_SECRET_DEV,
-    '--bucket-name', process.env.BUCKET_NAME_DEV,
-    '--aws-region', process.env.AWS_REGION_DEV,
-    '--project-name', 'ft-graphics-deploy/test-fixture',
-    '--branch-name', 'master',
-    '--sha', 'abcdefghijklmnop12345',
-    '--assets-prefix', 'http://example.com/assets/',
-    '--confirm',
-  ], {
-    cwd: fixturePath,
-    stdio: 'inherit',
-  });
+  const child = execa(
+    cliPath,
+    [
+      '--aws-key',
+      process.env.AWS_KEY_DEV,
+      '--aws-secret',
+      process.env.AWS_SECRET_DEV,
+      '--bucket-name',
+      process.env.BUCKET_NAME_DEV,
+      '--aws-region',
+      process.env.AWS_REGION_DEV,
+      '--project-name',
+      'ft-graphics-deploy/test-fixture',
+      '--branch-name',
+      'master',
+      '--sha',
+      'abcdefghijklmnop12345',
+      '--assets-prefix',
+      'http://example.com/assets/',
+      '--confirm',
+    ],
+    {
+      cwd: fixturePath,
+      stdio: 'inherit',
+    },
+  );
 
   try {
     await child;
@@ -39,11 +51,13 @@ test('CLI deployment works', async (t) => {
 
   // check both targets got deployed
   await Promise.all(['master', 'abcdefghijklmnop12345'].map(async (ref) => {
-    const htmlRes = await fetch(`http://${process.env.BUCKET_NAME_DEV}.s3-website-eu-west-1.amazonaws.com/v2/ft-graphics-deploy/test-fixture/${ref}/`);
+    const htmlRes = await fetch(`http://${process.env
+      .BUCKET_NAME_DEV}.s3-website-eu-west-1.amazonaws.com/v2/ft-graphics-deploy/test-fixture/${ref}/`);
     t.true(htmlRes.ok);
     t.true(/it works/.test(await htmlRes.text()));
 
-    const revManifestRes = await fetch(`http://${process.env.BUCKET_NAME_DEV}.s3-website-eu-west-1.amazonaws.com/v2/ft-graphics-deploy/test-fixture/${ref}/rev-manifest.json`);
+    const revManifestRes = await fetch(`http://${process.env
+      .BUCKET_NAME_DEV}.s3-website-eu-west-1.amazonaws.com/v2/ft-graphics-deploy/test-fixture/${ref}/rev-manifest.json`);
     t.true(revManifestRes.ok);
 
     t.deepEqual(await revManifestRes.json(), {
@@ -53,21 +67,33 @@ test('CLI deployment works', async (t) => {
 });
 
 test('CLI preview deployment works', async (t) => {
-  const child = execa(cliPath, [
-    '--aws-key', process.env.AWS_KEY_DEV,
-    '--aws-secret', process.env.AWS_SECRET_DEV,
-    '--bucket-name', process.env.BUCKET_NAME_DEV,
-    '--aws-region', process.env.AWS_REGION_DEV,
-    '--project-name', 'ft-graphics-deploy/test-fixture',
-    '--branch-name', 'master',
-    '--sha', 'abcdefghijklmnop12345',
-    '--assets-prefix', 'http://example.com/assets/',
-    '--preview',
-    '--confirm',
-  ], {
-    cwd: fixturePath,
-    stdio: 'inherit',
-  });
+  const child = execa(
+    cliPath,
+    [
+      '--aws-key',
+      process.env.AWS_KEY_DEV,
+      '--aws-secret',
+      process.env.AWS_SECRET_DEV,
+      '--bucket-name',
+      process.env.BUCKET_NAME_DEV,
+      '--aws-region',
+      process.env.AWS_REGION_DEV,
+      '--project-name',
+      'ft-graphics-deploy/test-fixture',
+      '--branch-name',
+      'master',
+      '--sha',
+      'abcdefghijklmnop12345',
+      '--assets-prefix',
+      'http://example.com/assets/',
+      '--preview',
+      '--confirm',
+    ],
+    {
+      cwd: fixturePath,
+      stdio: 'inherit',
+    },
+  );
 
   try {
     await child;
@@ -79,11 +105,13 @@ test('CLI preview deployment works', async (t) => {
 
   // check both targets got deployed
   await Promise.all(['master', 'abcdefghijklmnop12345'].map(async (ref) => {
-    const htmlRes = await fetch(`http://${process.env.BUCKET_NAME_DEV}.s3-website-eu-west-1.amazonaws.com/v2-preview/ft-graphics-deploy/test-fixture/${ref}/`);
+    const htmlRes = await fetch(`http://${process.env
+      .BUCKET_NAME_DEV}.s3-website-eu-west-1.amazonaws.com/v2-preview/ft-graphics-deploy/test-fixture/${ref}/`);
     t.true(htmlRes.ok);
     t.true(/it works/.test(await htmlRes.text()));
 
-    const revManifestRes = await fetch(`http://${process.env.BUCKET_NAME_DEV}.s3-website-eu-west-1.amazonaws.com/v2-preview/ft-graphics-deploy/test-fixture/${ref}/rev-manifest.json`);
+    const revManifestRes = await fetch(`http://${process.env
+      .BUCKET_NAME_DEV}.s3-website-eu-west-1.amazonaws.com/v2-preview/ft-graphics-deploy/test-fixture/${ref}/rev-manifest.json`);
     t.true(revManifestRes.ok);
 
     t.deepEqual(await revManifestRes.json(), {
@@ -93,17 +121,29 @@ test('CLI preview deployment works', async (t) => {
 });
 
 test('Can get the branch URL', async (t) => {
-  const child = execa(cliPath, [
-    '--aws-key', process.env.AWS_KEY_DEV,
-    '--aws-secret', process.env.AWS_SECRET_DEV,
-    '--bucket-name', process.env.BUCKET_NAME_DEV,
-    '--aws-region', process.env.AWS_REGION_DEV,
-    '--project-name', 'ft-graphics-deploy/test-fixture',
-    '--branch-name', 'master',
-    '--sha', 'abcdefghijklmnop12345',
-    '--assets-prefix', 'http://example.com/assets/',
-    '--get-branch-url',
-  ], { cwd: fixturePath });
+  const child = execa(
+    cliPath,
+    [
+      '--aws-key',
+      process.env.AWS_KEY_DEV,
+      '--aws-secret',
+      process.env.AWS_SECRET_DEV,
+      '--bucket-name',
+      process.env.BUCKET_NAME_DEV,
+      '--aws-region',
+      process.env.AWS_REGION_DEV,
+      '--project-name',
+      'ft-graphics-deploy/test-fixture',
+      '--branch-name',
+      'master',
+      '--sha',
+      'abcdefghijklmnop12345',
+      '--assets-prefix',
+      'http://example.com/assets/',
+      '--get-branch-url',
+    ],
+    { cwd: fixturePath },
+  );
 
   try {
     await child;
@@ -115,21 +155,37 @@ test('Can get the branch URL', async (t) => {
 
   const { stdout } = await child;
 
-  t.is(stdout, `http://${process.env.BUCKET_NAME_DEV}.s3-website-${process.env.AWS_REGION_DEV}.amazonaws.com/v2/ft-graphics-deploy/test-fixture/master/`);
+  t.is(
+    stdout,
+    `http://${process.env.BUCKET_NAME_DEV}.s3-website-${process.env
+      .AWS_REGION_DEV}.amazonaws.com/v2/ft-graphics-deploy/test-fixture/master/`,
+  );
 });
 
 test('Can get the commit URL', async (t) => {
-  const child = execa(cliPath, [
-    '--aws-key', process.env.AWS_KEY_DEV,
-    '--aws-secret', process.env.AWS_SECRET_DEV,
-    '--bucket-name', process.env.BUCKET_NAME_DEV,
-    '--aws-region', process.env.AWS_REGION_DEV,
-    '--project-name', 'ft-graphics-deploy/test-fixture',
-    '--branch-name', 'master',
-    '--sha', 'abcdefghijklmnop12345',
-    '--assets-prefix', 'http://example.com/assets/',
-    '--get-commit-url',
-  ], { cwd: fixturePath });
+  const child = execa(
+    cliPath,
+    [
+      '--aws-key',
+      process.env.AWS_KEY_DEV,
+      '--aws-secret',
+      process.env.AWS_SECRET_DEV,
+      '--bucket-name',
+      process.env.BUCKET_NAME_DEV,
+      '--aws-region',
+      process.env.AWS_REGION_DEV,
+      '--project-name',
+      'ft-graphics-deploy/test-fixture',
+      '--branch-name',
+      'master',
+      '--sha',
+      'abcdefghijklmnop12345',
+      '--assets-prefix',
+      'http://example.com/assets/',
+      '--get-commit-url',
+    ],
+    { cwd: fixturePath },
+  );
 
   try {
     await child;
@@ -141,5 +197,9 @@ test('Can get the commit URL', async (t) => {
 
   const { stdout } = await child;
 
-  t.is(stdout, `http://${process.env.BUCKET_NAME_DEV}.s3-website-${process.env.AWS_REGION_DEV}.amazonaws.com/v2/ft-graphics-deploy/test-fixture/abcdefghijklmnop12345/`);
+  t.is(
+    stdout,
+    `http://${process.env.BUCKET_NAME_DEV}.s3-website-${process.env
+      .AWS_REGION_DEV}.amazonaws.com/v2/ft-graphics-deploy/test-fixture/abcdefghijklmnop12345/`,
+  );
 });
