@@ -23,7 +23,7 @@
     "input": "^1.0.1",
     "meow": "^3.7.0",
     "parse-github-url": "^1.0.0",
-    "s3": "^4.4.0",
+    "s3": "callumlocke/node-s3-client",
     "tmp-promise": "^1.0.3"
   },
   "devDependencies": {
