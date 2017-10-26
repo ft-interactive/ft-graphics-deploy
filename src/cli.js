@@ -11,11 +11,14 @@ import verifyGit from './verifyGit';
 
 (async () => {
   // use meow to parse CLI arguments
-  const cli = meow({ help }, {
-    alias: {
-      h: 'help',
+  const cli = meow(
+    { help },
+    {
+      alias: {
+        h: 'help',
+      },
     },
-  });
+  );
 
   // define our defaults - some of which come from environment variables
   const defaults = {
@@ -35,14 +38,16 @@ import verifyGit from './verifyGit';
 
     // infer the project name from the GitHub repo name
     if (!options.projectName) {
-      const originURL = await execa.stdout('git', ['config', '--get', 'remote.origin.url']);
+      const originURL = await execa.stdout('git', [
+        'config',
+        '--get',
+        'remote.origin.url',
+      ]);
 
       const { repo, host } = parseGitHubURL(originURL);
 
       if (host !== 'github.com') {
-        throw new Error(
-          `Expected git remote "origin" to be a github.com URL, but it was: ${originURL}`,
-        );
+        throw new Error(`Expected git remote "origin" to be a github.com URL, but it was: ${originURL}`);
       }
 
       options.projectName = repo;
@@ -50,12 +55,21 @@ import verifyGit from './verifyGit';
 
     // use the SHA of the current commit
     if (!options.sha) {
-      options.sha = await execa.stdout('git', ['rev-parse', '--verify', 'HEAD']);
+      options.sha = await execa.stdout('git', [
+        'rev-parse',
+        '--verify',
+        'HEAD',
+      ]);
     }
 
     // use the name of the branch we're on now
     if (!options.branchName) {
-      options.branchName = await execa.stdout('git', ['rev-parse', '--abbrev-ref', '--verify', 'HEAD']);
+      options.branchName = await execa.stdout('git', [
+        'rev-parse',
+        '--abbrev-ref',
+        '--verify',
+        'HEAD',
+      ]);
     }
   }
 
@@ -80,18 +94,19 @@ import verifyGit from './verifyGit';
   }
 
   // report options (except secrets)
-  console.log(
-    '\nOptions:\n' +
-    `  local dir: ${options.localDir}\n` +
-    `  project name: ${options.projectName}\n` +
-    `  branch name: ${options.targets[0]}\n` +
-    `  sha: ${options.targets[1]}\n` +
-    `  assets prefix: ${options.assetsPrefix}\n` +
-    `  preview: ${options.preview}`,
-  );
+  console.log('\nOptions:\n' +
+      `  local dir: ${options.localDir}\n` +
+      `  project name: ${options.projectName}\n` +
+      `  branch name: ${options.targets[0]}\n` +
+      `  sha: ${options.targets[1]}\n` +
+      `  assets prefix: ${options.assetsPrefix}\n` +
+      `  preview: ${options.preview}`);
 
   // ask for confirmation
-  if (!options.confirm && !(await input.confirm('Continue?', { default: false }))) {
+  if (
+    !options.confirm &&
+    !await input.confirm('Continue?', { default: false })
+  ) {
     process.exit();
   }
 

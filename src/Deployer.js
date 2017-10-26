@@ -56,7 +56,10 @@ export default class Deployer extends EventEmitter {
     // load in the rev-manifest
     const revManifest: ?RevManifest = (() => {
       try {
-        return JSON.parse(fs.readFileSync(path.resolve(localDir, REV_MANIFEST_FILENAME), 'utf8'));
+        return JSON.parse(fs.readFileSync(
+          path.resolve(localDir, REV_MANIFEST_FILENAME),
+          'utf8',
+        ));
       } catch (error) {
         if (error.code === 'ENOENT') return undefined;
         throw error;
@@ -114,7 +117,10 @@ export default class Deployer extends EventEmitter {
         },
 
         getS3Params: (localFile, stat, callback) => {
-          const relativeLocalFile = path.relative(localDir, path.resolve(localFile));
+          const relativeLocalFile = path.relative(
+            localDir,
+            path.resolve(localFile),
+          );
 
           // skip this file if it's not in the rev manifest
           if (revvedFiles.indexOf(relativeLocalFile) === -1) {
@@ -144,74 +150,84 @@ export default class Deployer extends EventEmitter {
       });
     });
 
-    const uploadedBundles = Promise.all(targets.map(target => new Promise((resolve, reject) => {
-      const uploader = client.uploadDir({
-        localDir,
+    const uploadedBundles = Promise.all(targets.map(target =>
+      new Promise((resolve, reject) => {
+        const uploader = client.uploadDir({
+          localDir,
 
-        deleteRemoved: true,
+          deleteRemoved: true,
 
-        s3Params: {
-          Bucket: bucketName,
-          Prefix: `v2${preview ? '-preview' : ''}/${projectName}/${target}/`,
-          ACL: 'public-read',
-        },
+          s3Params: {
+            Bucket: bucketName,
+            Prefix: `v2${preview
+              ? '-preview'
+              : ''}/${projectName}/${target}/`,
+            ACL: 'public-read',
+          },
 
-        getS3Params: (localFile, stat, callback) => {
-          const relativeLocalFile = path.relative(localDir, path.resolve(localFile));
+          getS3Params: (localFile, stat, callback) => {
+            const relativeLocalFile = path.relative(
+              localDir,
+              path.resolve(localFile),
+            );
 
-          if (relativeLocalFile === REV_MANIFEST_FILENAME) {
-            callback(null, null);
-          }
+            if (relativeLocalFile === REV_MANIFEST_FILENAME) {
+              callback(null, null);
+            }
 
-          const fileParams = {};
+            const fileParams = {};
 
-          // set cache headers
-          fileParams.CacheControl = `max-age=${typeof maxAge === 'number' ? maxAge : 60}`;
+            // set cache headers
+            fileParams.CacheControl = `max-age=${typeof maxAge === 'number'
+              ? maxAge
+              : 60}`;
 
-          // use text/html for extensionless files (similar to gh-pages)
-          if (path.extname(relativeLocalFile) === '') fileParams.ContentType = 'text/html';
+            // use text/html for extensionless files (similar to gh-pages)
+            if (path.extname(relativeLocalFile) === '') { fileParams.ContentType = 'text/html'; }
 
-          callback(null, fileParams);
-        },
-      });
-
-      uploader.on('error', (error) => {
-        this.emit('error', error);
-        reject(error);
-      });
-
-      uploader.on('end', () => {
-        this.emit('uploaded', {
-          info: `${target} (bundle)`,
+            callback(null, fileParams);
+          },
         });
 
-        // finally, upload the modifed rev manifest
-        if (revManifest) {
-          const manifestUploader = client.uploadFile({
-            localFile: revManifestTmpPath,
+        uploader.on('error', (error) => {
+          this.emit('error', error);
+          reject(error);
+        });
 
-            s3Params: {
-              Bucket: bucketName,
-              ACL: 'public-read',
-              Key: `v2${preview ? '-preview' : ''}/${projectName}/${target}/${REV_MANIFEST_FILENAME}`,
-            },
+        uploader.on('end', () => {
+          this.emit('uploaded', {
+            info: `${target} (bundle)`,
           });
 
-          uploader.on('error', (error) => {
-            this.emit('error', error);
-            reject(error);
-          });
+          // finally, upload the modifed rev manifest
+          if (revManifest) {
+            const manifestUploader = client.uploadFile({
+              localFile: revManifestTmpPath,
 
-          manifestUploader.on('end', () => {
-            this.emit('uploaded', {
-              info: `${target} (modified rev-manifest)`,
+              s3Params: {
+                Bucket: bucketName,
+                ACL: 'public-read',
+                Key: `v2${preview
+                  ? '-preview'
+                  : ''}/${projectName}/${target}/${REV_MANIFEST_FILENAME}`,
+              },
             });
 
-            resolve();
-          });
-        } else resolve();
-      });
-    })));
+            uploader.on('error', (error) => {
+              this.emit('error', error);
+              reject(error);
+            });
+
+            manifestUploader.on('end', () => {
+              this.emit('uploaded', {
+                info: `${target} (modified rev-manifest)`,
+              });
+
+              resolve();
+            });
+          } else resolve();
+        });
+      })));
 
     await Promise.all([uploadedAssets, uploadedBundles]);
 
@@ -230,8 +246,9 @@ export default class Deployer extends EventEmitter {
       preview,
     } = this.options;
 
-    return targets.map(target => (
-      `http://${bucketName}.s3-website-${awsRegion}.amazonaws.com/v2${preview ? '-preview' : ''}/${projectName}/${target}/`
-    ));
+    return targets.map(target =>
+      `http://${bucketName}.s3-website-${awsRegion}.amazonaws.com/v2${preview
+        ? '-preview'
+        : ''}/${projectName}/${target}/`);
   }
 }
