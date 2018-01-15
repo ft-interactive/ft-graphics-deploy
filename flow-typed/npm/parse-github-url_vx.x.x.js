@@ -1,4 +1,4 @@
-// flow-typed signature: 5b73e711dc6d71a609f68d1b87cbe8d3
+// flow-typed signature: 85bf60a35ebc9753b99a1e3ed3bbd765
 // flow-typed version: <<STUB>>/parse-github-url_v^1.0.0/flow_v0.57.3
 
 /**
@@ -22,9 +22,14 @@ declare module 'parse-github-url' {
  * require those files directly. Feel free to delete any files that aren't
  * needed.
  */
-
+declare module 'parse-github-url/cli' {
+  declare module.exports: any;
+}
 
 // Filename aliases
+declare module 'parse-github-url/cli.js' {
+  declare module.exports: $Exports<'parse-github-url/cli'>;
+}
 declare module 'parse-github-url/index' {
   declare module.exports: $Exports<'parse-github-url'>;
 }
