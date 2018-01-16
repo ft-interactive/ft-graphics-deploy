@@ -1,7 +1,7 @@
 {
   "name": "ft-graphics-deploy",
   "description": "CLI for deploying FT Graphics projects",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "ava": {
     "babel": {},
     "files": "dist/**/*.test.js",
@@ -53,7 +53,6 @@
   "scripts": {
     "build": "del dist && babel src --out-dir dist --source-maps",
     "test": "ava",
-    "verify": "flow && eslint .",
-    "postinstall": "flow-typed install"
+    "verify": "flow && eslint ."
   }
 }
