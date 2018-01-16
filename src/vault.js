@@ -5,9 +5,14 @@
 
 import nodeVault from 'node-vault';
 
-export default async function getAwsKeys(roleId, secretId) {
+export default async function getAwsKeys(
+  roleId,
+  secretId,
+  endpoint,
+  secretPath,
+) {
   const vault = nodeVault({
-    endpoint: process.env.VAULT_ENDPOINT,
+    endpoint,
   });
 
   try {
@@ -18,7 +23,7 @@ export default async function getAwsKeys(roleId, secretId) {
 
     vault.token = result.auth.client_token;
 
-    return vault.read(`${process.env.VAULT_SECRET_PATH}/${
+    return vault.read(`${secretPath}/${
       process.env.CIRCLE_PROJECT_REPONAME &&
         process.env.CIRCLE_PROJECT_REPONAME === 'ft-graphics-deploy'
         ? 'testing'

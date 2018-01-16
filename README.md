@@ -18,7 +18,15 @@ $ ft-graphics-deploy --help
   All flags are optional when this command is run from a typical FT
   Graphics project repo in CI.
   ────────────────────────────────────────────────────────────────────
-  AWS settings
+  Vault settings
+  If not provided these will be inferred from environment variables following
+  each flag.
+  --vault-endpoint ($VAULT_ENDPOINT)
+  --vault-role ($VAULT_ROLE)
+  --vault-secret ($VAULT_SECRET)
+  --vault-secret-path ($VAULT_SECRET_PATH)
+
+  AWS settings (Deprecated for FT projects — use Vault instead)
   If not provided, these settings are taken from env vars
   ("AWS_KEY_PROD", "AWS_SECRET_PROD", etc.)
     --aws-key
@@ -50,7 +58,7 @@ The most straightforward way:
 ```js
 import deploy from 'ft-graphics-deploy';
 
-deploy(options).then((baseURLs) => {
+deploy(options).then(baseURLs => {
   console.log('uploaded to:', baseURLs);
 });
 ```
@@ -62,7 +70,7 @@ import { Deployer } from 'ft-graphics-deploy';
 
 const deployer = new Deployer(options);
 
-deployer.execute().then((baseURLs) => {
+deployer.execute().then(baseURLs => {
   console.log('uploaded to:', baseURLs);
 });
 ```
@@ -79,13 +87,14 @@ Run `yarn build -- --watch` and `yarn test -- --watch` in separate terminal tabs
 
 ### Publishing a new version to npm
 
-- Make sure you're on master: `git checkout master`
-- Update the version: `npm version patch` (or replace `patch` with `minor` or `major` as appropriate)
-  - This updates package.json, commits this single-line change, and creates a new git tag
-- Push to GitHub: `git push && git push --tags`
+* Make sure you're on master: `git checkout master`
+* Update the version: `npm version patch` (or replace `patch` with `minor` or `major` as appropriate)
+  * This updates package.json, commits this single-line change, and creates a new git tag
+* Push to GitHub: `git push && git push --tags`
 
 CircleCI will do the rest.
 
 <!-- badge URLs -->
+
 [circle-url]: https://circleci.com/gh/ft-interactive/ft-graphics-deploy
 [circle-image]: https://circleci.com/gh/ft-interactive/ft-graphics-deploy.svg?style=svg

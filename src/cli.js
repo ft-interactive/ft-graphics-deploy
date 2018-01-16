@@ -24,8 +24,10 @@ import vault from './vault';
   // define our defaults - some of which come from environment variables
   const defaults = {
     localDir: 'dist',
+    vaultEndpoint: process.env.VAULT_ENDPOINT,
     vaultRole: process.env.VAULT_ROLE,
     vaultSecret: process.env.VAULT_SECRET,
+    vaultSecretPath: process.env.VAULT_SECRET_PATH,
     awsKey: process.env.AWS_KEY_PROD,
     awsSecret: process.env.AWS_SECRET_PROD,
     bucketName: process.env.BUCKET_NAME_PROD,
@@ -78,7 +80,12 @@ import vault from './vault';
 
   if (options.vaultRole && options.vaultSecret) {
     try {
-      const result = await vault(options.vaultRole, options.vaultSecret);
+      const result = await vault(
+        options.vaultRole,
+        options.vaultSecret,
+        options.vaultEndpoint,
+        options.vaultSecretPath,
+      );
       const { AWS_KEY_PROD, AWS_SECRET_PROD } = result.data;
 
       if (AWS_KEY_PROD && AWS_SECRET_PROD) {

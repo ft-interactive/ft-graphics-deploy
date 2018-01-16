@@ -8,7 +8,15 @@ export default `
   ${grey(`All flags are optional when this command is run from a typical FT
   Graphics project repo in CI.`)}
   ${grey('────────────────────────────────────────────────────────────────────')}
-  ${cyan('AWS settings')}
+  ${cyan('Vault settings')}
+  ${grey(`If not provided these will be inferred from environment variables following
+  each flag.`)}
+  --vault-endpoint (VAULT_ENDPOINT)
+  --vault-role (VAULT_ROLE)
+  --vault-secret (VAULT_SECRET)
+  --vault-secret-path (VAULT_SECRET_PATH)
+
+  ${cyan('AWS settings (Deprecated for FT projects — use Vault instead)')}
   ${grey(`If not provided, these settings are taken from env vars
   ("AWS_KEY_PROD", "AWS_SECRET_PROD", etc.)`)}
     --aws-key
