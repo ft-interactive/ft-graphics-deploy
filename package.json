@@ -1,17 +1,12 @@
 {
   "name": "ft-graphics-deploy",
   "description": "CLI for deploying FT Graphics projects",
-  "version": "2.1.6",
+  "version": "2.2.0",
   "ava": {
     "babel": {},
     "files": "dist/**/*.test.js",
-    "require": [
-      "./setup.js"
-    ],
-    "source": [
-      "dist/**/*.js",
-      "fixtures/**/*.js"
-    ]
+    "require": ["./setup.js"],
+    "source": ["dist/**/*.js", "fixtures/**/*.js"]
   },
   "bin": "cli.js",
   "dependencies": {
@@ -22,6 +17,7 @@
     "figures": "^2.0.0",
     "input": "^1.0.1",
     "meow": "^3.7.0",
+    "node-vault": "^0.7.1",
     "parse-github-url": "^1.0.0",
     "s3": "callumlocke/node-s3-client",
     "tmp-promise": "^1.0.3"
@@ -50,12 +46,7 @@
   "engines": {
     "node": ">=7.10"
   },
-  "files": [
-    "cli.js",
-    "setup.js",
-    "dist",
-    "src"
-  ],
+  "files": ["cli.js", "setup.js", "dist", "src"],
   "license": "MIT",
   "main": "dist",
   "repository": "ft-interactive/ft-graphics-deploy",

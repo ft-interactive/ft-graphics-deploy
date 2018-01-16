@@ -1,4 +1,4 @@
-// flow-typed signature: 965f8d4c331329421abfafed60b57501
+// flow-typed signature: ca770ce31aa3bac2227b2f5a8abb05b2
 // flow-typed version: <<STUB>>/eslint_v^4.9.0/flow_v0.57.3
 
 /**
@@ -187,14 +187,6 @@ declare module 'eslint/lib/formatters/visualstudio' {
 }
 
 declare module 'eslint/lib/ignored-paths' {
-  declare module.exports: any;
-}
-
-declare module 'eslint/lib/internal-rules/internal-consistent-docs-description' {
-  declare module.exports: any;
-}
-
-declare module 'eslint/lib/internal-rules/internal-no-invalid-meta' {
   declare module.exports: any;
 }
 
@@ -391,6 +383,10 @@ declare module 'eslint/lib/rules/id-length' {
 }
 
 declare module 'eslint/lib/rules/id-match' {
+  declare module.exports: any;
+}
+
+declare module 'eslint/lib/rules/implicit-arrow-linebreak' {
   declare module.exports: any;
 }
 
@@ -1330,11 +1326,19 @@ declare module 'eslint/lib/util/hash' {
   declare module.exports: any;
 }
 
+declare module 'eslint/lib/util/interpolate' {
+  declare module.exports: any;
+}
+
 declare module 'eslint/lib/util/keywords' {
   declare module.exports: any;
 }
 
 declare module 'eslint/lib/util/module-resolver' {
+  declare module.exports: any;
+}
+
+declare module 'eslint/lib/util/naming' {
   declare module.exports: any;
 }
 
@@ -1509,12 +1513,6 @@ declare module 'eslint/lib/formatters/visualstudio.js' {
 declare module 'eslint/lib/ignored-paths.js' {
   declare module.exports: $Exports<'eslint/lib/ignored-paths'>;
 }
-declare module 'eslint/lib/internal-rules/internal-consistent-docs-description.js' {
-  declare module.exports: $Exports<'eslint/lib/internal-rules/internal-consistent-docs-description'>;
-}
-declare module 'eslint/lib/internal-rules/internal-no-invalid-meta.js' {
-  declare module.exports: $Exports<'eslint/lib/internal-rules/internal-no-invalid-meta'>;
-}
 declare module 'eslint/lib/linter.js' {
   declare module.exports: $Exports<'eslint/lib/linter'>;
 }
@@ -1661,6 +1659,9 @@ declare module 'eslint/lib/rules/id-length.js' {
 }
 declare module 'eslint/lib/rules/id-match.js' {
   declare module.exports: $Exports<'eslint/lib/rules/id-match'>;
+}
+declare module 'eslint/lib/rules/implicit-arrow-linebreak.js' {
+  declare module.exports: $Exports<'eslint/lib/rules/implicit-arrow-linebreak'>;
 }
 declare module 'eslint/lib/rules/indent-legacy.js' {
   declare module.exports: $Exports<'eslint/lib/rules/indent-legacy'>;
@@ -2364,11 +2365,17 @@ declare module 'eslint/lib/util/glob.js' {
 declare module 'eslint/lib/util/hash.js' {
   declare module.exports: $Exports<'eslint/lib/util/hash'>;
 }
+declare module 'eslint/lib/util/interpolate.js' {
+  declare module.exports: $Exports<'eslint/lib/util/interpolate'>;
+}
 declare module 'eslint/lib/util/keywords.js' {
   declare module.exports: $Exports<'eslint/lib/util/keywords'>;
 }
 declare module 'eslint/lib/util/module-resolver.js' {
   declare module.exports: $Exports<'eslint/lib/util/module-resolver'>;
+}
+declare module 'eslint/lib/util/naming.js' {
+  declare module.exports: $Exports<'eslint/lib/util/naming'>;
 }
 declare module 'eslint/lib/util/node-event-generator.js' {
   declare module.exports: $Exports<'eslint/lib/util/node-event-generator'>;

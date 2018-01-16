@@ -8,6 +8,7 @@ import input from 'input';
 import help from './help';
 import Deployer from './Deployer';
 import verifyGit from './verifyGit';
+import vault from './vault';
 
 (async () => {
   // use meow to parse CLI arguments
@@ -23,6 +24,8 @@ import verifyGit from './verifyGit';
   // define our defaults - some of which come from environment variables
   const defaults = {
     localDir: 'dist',
+    vaultRole: process.env.VAULT_ROLE,
+    vaultSecret: process.env.VAULT_SECRET,
     awsKey: process.env.AWS_KEY_PROD,
     awsSecret: process.env.AWS_SECRET_PROD,
     bucketName: process.env.BUCKET_NAME_PROD,
@@ -70,6 +73,20 @@ import verifyGit from './verifyGit';
         '--verify',
         'HEAD',
       ]);
+    }
+  }
+
+  if (options.vaultRole && options.vaultSecret) {
+    try {
+      const result = await vault(options.vaultRole, options.vaultSecret);
+      const { AWS_KEY_PROD, AWS_SECRET_PROD } = result.data;
+
+      if (AWS_KEY_PROD && AWS_SECRET_PROD) {
+        options.awsKey = AWS_KEY_PROD;
+        options.awsSecret = AWS_SECRET_PROD;
+      }
+    } catch (e) {
+      console.error(`Vault error: ${e.message}`);
     }
   }
 
