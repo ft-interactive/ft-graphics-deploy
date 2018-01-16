@@ -5,13 +5,8 @@
   "ava": {
     "babel": {},
     "files": "dist/**/*.test.js",
-    "require": [
-      "./setup.js"
-    ],
-    "source": [
-      "dist/**/*.js",
-      "fixtures/**/*.js"
-    ]
+    "require": ["./setup.js"],
+    "source": ["dist/**/*.js", "fixtures/**/*.js"]
   },
   "bin": "cli.js",
   "dependencies": {
@@ -46,24 +41,19 @@
     "eslint-plugin-react": "^7.4.0",
     "flow-bin": "^0.57.3",
     "flow-typed": "^2.2.1",
-    "node-fetch": "^1.7.3",
-    "npm-cli-login": "0.0.10"
+    "node-fetch": "^1.7.3"
   },
   "engines": {
     "node": ">=7.10"
   },
-  "files": [
-    "cli.js",
-    "setup.js",
-    "dist",
-    "src"
-  ],
+  "files": ["cli.js", "setup.js", "dist", "src"],
   "license": "MIT",
   "main": "dist",
   "repository": "ft-interactive/ft-graphics-deploy",
   "scripts": {
     "build": "del dist && babel src --out-dir dist --source-maps",
     "test": "ava",
-    "verify": "flow && eslint ."
+    "verify": "flow && eslint .",
+    "postinstall": "flow-typed install"
   }
 }
