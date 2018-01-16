@@ -51,13 +51,15 @@ test('CLI deployment works', async (t) => {
 
   // check both targets got deployed
   await Promise.all(['master', 'abcdefghijklmnop12345'].map(async (ref) => {
-    const htmlRes = await fetch(`http://${process.env
-      .BUCKET_NAME_DEV}.s3-website-eu-west-1.amazonaws.com/v2/ft-graphics-deploy/test-fixture/${ref}/`);
+    const htmlRes = await fetch(`http://${
+      process.env.BUCKET_NAME_DEV
+    }.s3-website-eu-west-1.amazonaws.com/v2/ft-graphics-deploy/test-fixture/${ref}/`);
     t.true(htmlRes.ok);
     t.true(/it works/.test(await htmlRes.text()));
 
-    const revManifestRes = await fetch(`http://${process.env
-      .BUCKET_NAME_DEV}.s3-website-eu-west-1.amazonaws.com/v2/ft-graphics-deploy/test-fixture/${ref}/rev-manifest.json`);
+    const revManifestRes = await fetch(`http://${
+      process.env.BUCKET_NAME_DEV
+    }.s3-website-eu-west-1.amazonaws.com/v2/ft-graphics-deploy/test-fixture/${ref}/rev-manifest.json`);
     t.true(revManifestRes.ok);
 
     t.deepEqual(await revManifestRes.json(), {
@@ -105,13 +107,15 @@ test('CLI preview deployment works', async (t) => {
 
   // check both targets got deployed
   await Promise.all(['master', 'abcdefghijklmnop12345'].map(async (ref) => {
-    const htmlRes = await fetch(`http://${process.env
-      .BUCKET_NAME_DEV}.s3-website-eu-west-1.amazonaws.com/v2-preview/ft-graphics-deploy/test-fixture/${ref}/`);
+    const htmlRes = await fetch(`http://${
+      process.env.BUCKET_NAME_DEV
+    }.s3-website-eu-west-1.amazonaws.com/v2-preview/ft-graphics-deploy/test-fixture/${ref}/`);
     t.true(htmlRes.ok);
     t.true(/it works/.test(await htmlRes.text()));
 
-    const revManifestRes = await fetch(`http://${process.env
-      .BUCKET_NAME_DEV}.s3-website-eu-west-1.amazonaws.com/v2-preview/ft-graphics-deploy/test-fixture/${ref}/rev-manifest.json`);
+    const revManifestRes = await fetch(`http://${
+      process.env.BUCKET_NAME_DEV
+    }.s3-website-eu-west-1.amazonaws.com/v2-preview/ft-graphics-deploy/test-fixture/${ref}/rev-manifest.json`);
     t.true(revManifestRes.ok);
 
     t.deepEqual(await revManifestRes.json(), {
@@ -146,20 +150,18 @@ test('Can get the branch URL', async (t) => {
   );
 
   try {
-    await child;
+    const { stdout } = await child;
+
+    t.is(
+      stdout,
+      `http://${process.env.BUCKET_NAME_DEV}.s3-website-${
+        process.env.AWS_REGION_DEV
+      }.amazonaws.com/v2/ft-graphics-deploy/test-fixture/master/`,
+    );
   } catch (error) {
     // do not print the error message, as it may contain secrets
     t.fail('Command exited with non-zero code');
-    return;
   }
-
-  const { stdout } = await child;
-
-  t.is(
-    stdout,
-    `http://${process.env.BUCKET_NAME_DEV}.s3-website-${process.env
-      .AWS_REGION_DEV}.amazonaws.com/v2/ft-graphics-deploy/test-fixture/master/`,
-  );
 });
 
 test('Can get the commit URL', async (t) => {
@@ -188,18 +190,16 @@ test('Can get the commit URL', async (t) => {
   );
 
   try {
-    await child;
+    const { stdout } = await child;
+
+    t.is(
+      stdout,
+      `http://${process.env.BUCKET_NAME_DEV}.s3-website-${
+        process.env.AWS_REGION_DEV
+      }.amazonaws.com/v2/ft-graphics-deploy/test-fixture/abcdefghijklmnop12345/`,
+    );
   } catch (error) {
     // do not print the error message, as it may contain secrets
     t.fail('Command exited with non-zero code');
-    return;
   }
-
-  const { stdout } = await child;
-
-  t.is(
-    stdout,
-    `http://${process.env.BUCKET_NAME_DEV}.s3-website-${process.env
-      .AWS_REGION_DEV}.amazonaws.com/v2/ft-graphics-deploy/test-fixture/abcdefghijklmnop12345/`,
-  );
 });
