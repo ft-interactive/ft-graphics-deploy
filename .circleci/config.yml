@@ -21,16 +21,15 @@ jobs:
       - run:
           name: Compile with babel
           command: npm run build
-      # TEMPORARILY DISABLED
-      # - run:
-      #     name: AVA tests
-      #     command: ./node_modules/.bin/ava
+      - run:
+          name: AVA tests
+          command: ./node_modules/.bin/ava
       - store_artifacts:
           path: dist/
       - deploy:
           name: Maybe publish to npm
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              echo -e "$NPM_USERNAME\n$NPM_PASSWORD\n$NPM_EMAIL" | npm login
+              npx npm-cli-login -u $NPM_USERNAME -p $NPM_PASSWORD -e $NPM_EMAIL
               ./node_modules/.bin/publish
             fi
