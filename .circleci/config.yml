@@ -30,6 +30,6 @@ jobs:
           name: Maybe publish to npm
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              npx npm-cli-login -u $NPM_USERNAME -p $NPM_PASSWORD -e $NPM_EMAIL
-              ./node_modules/.bin/publish
+              ./node_modules/.bin/npm-cli-login -u $NPM_USERNAME -p $NPM_PASSWORD -e $NPM_EMAIL
+              ./node_modules/.bin/ci-publish
             fi
