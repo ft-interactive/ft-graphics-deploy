@@ -33,6 +33,8 @@ export default `
     --preview - upload files to preview folder
     --assets-prefix - base for asset URLs; affects the rev-manifest and all
                       HTML/CSS files
+    --delete-removed - if true, deletes files from S3 if deleted from the
+                      bundle, otherwise files will persist in S3
 
   ${cyan('Other')}
     --help - show this help and exit

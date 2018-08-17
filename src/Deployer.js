@@ -22,6 +22,8 @@ export type DeployerOptions = {
 
   maxAge?: number, // for everything except revved assets
 
+  deleteRemoved?: boolean, // delete files from S3 if deleted in bundle
+
   assetsPrefix?: string, // e.g. "https://example.com/v2/__assets/"
 };
 
@@ -50,6 +52,7 @@ export default class Deployer extends EventEmitter {
       targets,
       preview,
       assetsPrefix,
+      deleteRemoved,
       maxAge,
     } = this.options;
 
@@ -155,7 +158,7 @@ export default class Deployer extends EventEmitter {
         const uploader = client.uploadDir({
           localDir,
 
-          deleteRemoved: true,
+          deleteRemoved,
 
           s3Params: {
             Bucket: bucketName,

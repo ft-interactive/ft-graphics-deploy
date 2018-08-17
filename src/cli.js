@@ -33,6 +33,7 @@ import vault from './vault';
     bucketName: process.env.BUCKET_NAME_PROD,
     awsRegion: process.env.AWS_REGION_PROD || 'eu-west-1',
     preview: false,
+    deleteRemoved: true,
   };
 
   const options = { ...defaults, ...cli.flags };
@@ -124,6 +125,7 @@ import vault from './vault';
       `  branch name: ${options.targets[0]}\n` +
       `  sha: ${options.targets[1]}\n` +
       `  assets prefix: ${options.assetsPrefix}\n` +
+      `  delete removed?: ${options.deleteRemoved}\n` +
       `  preview: ${options.preview}`);
 
   // ask for confirmation
