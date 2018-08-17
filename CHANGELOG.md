@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 _Nothing_
 
+## [2.2.3] — 2018-08-17
+
+* Add deleteRemoved option as a flag
+
 ## [2.2.0, 2.2.1, 2.2.2] - 2018-01-16
 
 * Adds Vault support
