@@ -5,8 +5,13 @@
   "ava": {
     "babel": {},
     "files": "dist/**/*.test.js",
-    "require": ["./setup.js"],
-    "source": ["dist/**/*.js", "fixtures/**/*.js"]
+    "require": [
+      "./setup.js"
+    ],
+    "source": [
+      "dist/**/*.js",
+      "fixtures/**/*.js"
+    ]
   },
   "bin": "cli.js",
   "dependencies": {
@@ -46,7 +51,12 @@
   "engines": {
     "node": ">=7.10"
   },
-  "files": ["cli.js", "setup.js", "dist", "src"],
+  "files": [
+    "cli.js",
+    "setup.js",
+    "dist",
+    "src"
+  ],
   "license": "MIT",
   "main": "dist",
   "repository": "ft-interactive/ft-graphics-deploy",
