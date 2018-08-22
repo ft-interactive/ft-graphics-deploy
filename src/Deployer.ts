@@ -1,0 +1,188 @@
+/**
+ * @file
+ * EventEmitter-based deployer class.
+ * This does all the work.
+ */
+
+import { S3 } from "aws-sdk";
+import EventEmitter from "events";
+import { createReadStream, readFileSync, writeFileSync } from "fs";
+import { sync as glob } from "glob";
+import path from "path";
+import tmp from "tmp-promise";
+
+export interface IDeployerOptions {
+  localDir: string; // e.g. '/path/to/dist'
+  awsKey?: string;
+  awsSecret?: string;
+  awsRegion?: string;
+  bucketName: string;
+
+  projectName: string; // usually in the form 'ft-interactive/some-project'
+
+  targets: string[]; // for reference, the CLI provides two targets: the commit sha and branch name
+
+  preview?: boolean;
+
+  maxAge?: number; // for everything except revved assets
+
+  assetsPrefix?: string; // e.g. "https://example.com/v2/__assets/"
+}
+
+interface IRevManifest {
+  [key: string]: string;
+}
+
+const REV_MANIFEST_FILENAME = "rev-manifest.json";
+
+export default class Deployer extends EventEmitter {
+  public options: IDeployerOptions;
+
+  constructor(options: IDeployerOptions) {
+    super();
+    this.options = options;
+  }
+
+  public async execute() {
+    const {
+      localDir,
+      bucketName,
+      projectName,
+      awsKey,
+      awsSecret,
+      awsRegion,
+      targets,
+      preview,
+      assetsPrefix,
+      maxAge
+    } = this.options;
+
+    // load in the rev-manifest
+    const revManifest: IRevManifest | null = (() => {
+      try {
+        return JSON.parse(
+          readFileSync(path.resolve(localDir, REV_MANIFEST_FILENAME), "utf8")
+        );
+      } catch (error) {
+        if (error.code === "ENOENT") {
+          return undefined;
+        }
+        throw error;
+      }
+    })();
+
+    // save an altered version of the rev manifest, if any
+    let revManifestTmpPath: string;
+    if (revManifest) {
+      if (typeof assetsPrefix !== "string") {
+        throw new Error(
+          "Expected assetsPrefix to be defined if revManifest is being used"
+        );
+      }
+
+      const tmpFileDetails: {
+        fd: any; // file descriptor // @TODO improve
+        path: string;
+      } = await tmp.file();
+
+      revManifestTmpPath = tmpFileDetails.path;
+
+      const modifiedRevManifest: IRevManifest = {};
+      Object.keys(revManifest).forEach(key => {
+        modifiedRevManifest[key] = `${assetsPrefix}${revManifest[key]}`;
+      });
+
+      writeFileSync(tmpFileDetails.fd, JSON.stringify(modifiedRevManifest));
+    }
+
+    const revvedFiles = revManifest && Object.values(revManifest);
+
+    // make an S3 client instance
+    const client = new S3({
+      accessKeyId: awsKey,
+      region: awsRegion,
+      secretAccessKey: awsSecret
+    });
+
+    const allFiles = glob(`${localDir}/**/*`);
+    let uploadedAssets;
+    if (revvedFiles) {
+      uploadedAssets = Promise.all(
+        allFiles
+          .filter((filePath: string) => revvedFiles.includes(filePath))
+          // set long-term cache headers, as it's a revved asset
+          .map((filePath: string) => ({
+            cacheControl: "max-age=365000000, immutable",
+            path: filePath
+          }))
+          .map((file: { cacheControl: string; path: string }) =>
+            S3.putObject({
+              ACL: "public-read",
+              Body: readFileSync(file.path),
+              Bucket: bucketName,
+              CacheControl: file.cacheControl,
+              Prefix: `v2/__assets/${projectName}/`
+            }).promise()
+          )
+      ).then(() => this.emit("uploaded", { info: "assets" }));
+    }
+
+    await targets.reduce(async (queue: Promise<any[]>, target: string) => {
+      const acc = await queue;
+
+      const uploadedTarget = Promise.all(allFiles
+        .filter((filePath: string) => filePath !== REV_MANIFEST_FILENAME)
+        .map((file: string) =>
+          client.putObject({
+            ACL: "public-read",
+            Bucket: bucketName,
+            CacheControl: `max-age=${
+              typeof maxAge === "number" ? maxAge : 60
+            }`,
+            ContentType:
+              path.extname(file) === "" ? "text/html" : undefined,
+            Prefix: `v2${
+              preview ? "-preview" : ""
+            }/${projectName}/${target}/`
+          }).promise()
+        ))
+        .then(() => {
+          this.emit("uploaded", {
+            info: `${target} (bundle)`
+          });
+        })
+
+      if (revManifest) {
+        await client
+          .putObject().promise()
+          .then(() => this.emit("uploaded", {info: `${target} (modified rev-manifest)`}));
+      }
+      return [
+        ...acc,
+        await uploadedTarget
+      ];
+    }, Promise.resolve([]));
+
+    return this.getURLs();
+  }
+
+  /**
+   * Returns the base URLs that this deployer would deploy to.
+   */
+  public getURLs() {
+    const {
+      bucketName,
+      projectName,
+      awsRegion,
+      targets,
+      preview
+    } = this.options;
+
+    return targets.map(
+      target =>
+        `http://${bucketName}.s3-website-${awsRegion}.amazonaws.com/v2${
+          preview ? "-preview" : ""
+        }/${projectName}/${target}/`
+    );
+  }
+}

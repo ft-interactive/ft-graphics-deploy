@@ -1,4 +1,4 @@
-#! /usr/bin/env node
+#! /usr/bin/env node -r ts-node/register
 
-require('./setup.js');
-require('./dist/cli.js');
+require('./setup');
+require('./src/cli');

@@ -1,11 +1,13 @@
-// @flow
+/**
+ * @file
+ * Main entry point for instantiating Deployer
+ */
 
-import Deployer from './Deployer';
-import type { DeployerOptions } from './Deployer';
+import Deployer, { IDeployerOptions } from './Deployer';
 
 export default async (
-  options: DeployerOptions,
-  eventListeners?: { [string]: (...args: any) => void },
+  options: IDeployerOptions,
+  eventListeners?: { [key: string]: (...args: any[]) => void },
 ) => {
   const deployer = new Deployer(options);
 

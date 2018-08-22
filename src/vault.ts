@@ -6,10 +6,10 @@
 import nodeVault from 'node-vault';
 
 export default async function getAwsKeys(
-  roleId,
-  secretId,
-  endpoint,
-  secretPath,
+  roleId: string,
+  secretId: string,
+  endpoint: string,
+  secretPath: string,
 ) {
   const vault = nodeVault({
     endpoint,

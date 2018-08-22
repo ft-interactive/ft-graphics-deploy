@@ -1,7 +1,10 @@
-// @flow
+/**
+ * @file
+ * Help screen documentation
+ */
 
-import { cyan, grey } from 'chalk';
-
+import chalk from 'chalk';
+const {cyan, grey} = chalk;
 export default `
   ${grey('>')} ft-graphics-deploy ${grey('[FLAGS...]')}
   ${grey('────────────────────────────────────────────────────────────────────')}
