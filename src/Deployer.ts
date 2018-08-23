@@ -116,13 +116,18 @@ export default class Deployer extends EventEmitter {
             path: filePath
           }))
           .map((file: { cacheControl: string; path: string }) =>
-            S3.putObject({
-              ACL: "public-read",
-              Body: readFileSync(file.path),
-              Bucket: bucketName,
-              CacheControl: file.cacheControl,
-              Prefix: `v2/__assets/${projectName}/`
-            }).promise()
+            client
+              .putObject(
+                {
+                  ACL: "public-read",
+                  Body: readFileSync(file.path),
+                  Bucket: bucketName,
+                  CacheControl: file.cacheControl,
+                  Key: `v2/__assets/${projectName}/${path}`
+                },
+                undefined
+              )
+              .promise()
           )
       ).then(() => this.emit("uploaded", { info: "assets" }));
     }
@@ -130,37 +135,43 @@ export default class Deployer extends EventEmitter {
     await targets.reduce(async (queue: Promise<any[]>, target: string) => {
       const acc = await queue;
 
-      const uploadedTarget = Promise.all(allFiles
-        .filter((filePath: string) => filePath !== REV_MANIFEST_FILENAME)
-        .map((file: string) =>
-          client.putObject({
-            ACL: "public-read",
-            Bucket: bucketName,
-            CacheControl: `max-age=${
-              typeof maxAge === "number" ? maxAge : 60
-            }`,
-            ContentType:
-              path.extname(file) === "" ? "text/html" : undefined,
-            Prefix: `v2${
-              preview ? "-preview" : ""
-            }/${projectName}/${target}/`
-          }).promise()
-        ))
-        .then(() => {
-          this.emit("uploaded", {
-            info: `${target} (bundle)`
-          });
-        })
+      const uploadedTarget = Promise.all(
+        allFiles
+          .filter((filePath: string) => filePath !== REV_MANIFEST_FILENAME)
+          .map((file: string) =>
+            client
+              .putObject(
+                {
+                  ACL: "public-read",
+                  Bucket: bucketName,
+                  CacheControl: `max-age=${
+                    typeof maxAge === "number" ? maxAge : 60
+                  }`,
+                  ContentType:
+                    path.extname(file) === "" ? "text/html" : undefined,
+                  Key: `v2${
+                    preview ? "-preview" : ""
+                  }/${projectName}/${target}/${path}`
+                },
+                undefined
+              )
+              .promise()
+          )
+      ).then(() => {
+        this.emit("uploaded", {
+          info: `${target} (bundle)`
+        });
+      });
 
       if (revManifest) {
         await client
-          .putObject().promise()
-          .then(() => this.emit("uploaded", {info: `${target} (modified rev-manifest)`}));
+          .putObject()
+          .promise()
+          .then(() =>
+            this.emit("uploaded", { info: `${target} (modified rev-manifest)` })
+          );
       }
-      return [
-        ...acc,
-        await uploadedTarget
-      ];
+      return [...acc, await uploadedTarget];
     }, Promise.resolve([]));
 
     return this.getURLs();

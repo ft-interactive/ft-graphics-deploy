@@ -36,7 +36,7 @@ interface ICLIFlags {
   vaultSecretPath?: string;
 }
 
-(async () => {
+export default async () => {
   // use meow to parse CLI arguments
   const cli = meow(help);
 
@@ -179,4 +179,4 @@ interface ICLIFlags {
   urls.forEach((url: string) => {
     console.log(cyan(`  ${url}`));
   });
-})();
+};
