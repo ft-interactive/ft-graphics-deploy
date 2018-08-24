@@ -43,6 +43,7 @@
     "codecov": "^3.0.4",
     "del-cli": "^1.1.0",
     "mocha": "^5.2.0",
+    "mocha-junit-reporter": "^1.18.0",
     "node-fetch": "^1.7.3",
     "npm-prepublish": "^1.2.3",
     "nyc": "^12.0.2",
@@ -68,7 +69,8 @@
   "scripts": {
     "build": "tsc",
     "mocha": "mocha -r ts-node/register test/*.spec.ts",
-    "mocha:watch": "mocha -r ts-node/register test/*.spec.ts -w --watch-extensions ts",
+    "mocha:junit": "npm run mocha -- --reporter mocha-junit-reporter --reporter-options mochaFile=./test-results/mocha/results.xml",
+    "mocha:watch": "npm run mocha -- -w --watch-extensions ts",
     "test": "nyc npm run mocha",
     "report-coverage": "nyc report --reporter=lcov | codecov"
   },

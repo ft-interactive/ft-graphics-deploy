@@ -50,10 +50,12 @@ jobs:
       - *attach_workspace
       - run:
           name: Run tests
-          command: npm test
+          command: npm test && npm run mocha:junit
       - run:
           name: Upload coverage reports
           command: npm run report-coverage
+      - store_test_results:
+          path: test-results
 
   release_npm:
     <<: *default_container_config
