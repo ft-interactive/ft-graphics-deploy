@@ -1,2 +1,3 @@
-# fixes:
-#   - "src/::"
+ignore:
+  - "src/index.ts" # @TODO cover
+  - "src/cli.ts" # @TODO cover
