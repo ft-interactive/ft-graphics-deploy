@@ -3,21 +3,29 @@
  * Spec for Deployer class
  */
 
-import AWS from "aws-sdk-mock";
 import * as chai from "chai";
+import { readFileSync } from "fs";
 import { resolve } from "path";
+import proxyquire from "proxyquire";
 import sinon from "sinon";
 import sinonChai from "sinon-chai";
-import Deployer from "../src/Deployer";
 
 chai.use(sinonChai);
 const should = chai.should();
 
 describe("Deployer class", () => {
-  let inst: Deployer;
-  const putObjectSpy = sinon.spy();
-
+  let inst: any;
+  const putObjectStub = sinon.stub();
+  const { default: Deployer } = proxyquire("../src/Deployer", {
+    "aws-sdk": {
+      // prettier-ignore
+      S3: function() { // tslint:disable-line
+        return { putObject: putObjectStub };
+      }
+    }
+  });
   beforeEach(() => {
+    putObjectStub.returns({ promise: () => Promise.resolve(true) });
     inst = new Deployer({
       assetsPrefix: "https://ig.ft.com/v2/__assets/",
       awsRegion: "eu-west-1",
@@ -26,15 +34,10 @@ describe("Deployer class", () => {
       projectName: "test-project",
       targets: ["test"]
     });
-
-    AWS.mock("S3", "putObject", async (params: any) => {
-      return putObjectSpy(params);
-    });
   });
 
   afterEach(() => {
-    AWS.restore("S3", "putObject");
-    putObjectSpy.resetHistory();
+    putObjectStub.resetHistory();
   });
 
   describe("exports", () => {
@@ -51,29 +54,37 @@ describe("Deployer class", () => {
       res[0].should.equal(
         "http://test-bucket.s3-website-eu-west-1.amazonaws.com/v2/test-project/test/"
       );
-      putObjectSpy.callCount.should.equal(4);
-      putObjectSpy.firstCall.should.have.been.calledWithMatch({
+      putObjectStub.callCount.should.equal(4);
+      putObjectStub.should.have.been.calledWith({
         ACL: "public-read",
-        Body: "console.log('hi');\n",
+        Body: readFileSync(
+          resolve(__dirname, "..", "fixture", "dist", "foo.abc123.js")
+        ),
         Bucket: "test-bucket",
         CacheControl: "max-age=365000000, immutable",
         Key: `v2/__assets/test-project/foo.abc123.js`
       });
-      putObjectSpy.secondCall.should.have.been.calledWithMatch({
+      putObjectStub.should.have.been.calledWith({
         ACL: "public-read",
-        Body: "console.log('hi');\n",
+        Body: readFileSync(
+          resolve(__dirname, "..", "fixture", "dist", "foo.abc123.js")
+        ),
         Bucket: "test-bucket",
         CacheControl: "max-age=60",
+        ContentType: undefined,
         Key: `v2/test-project/test/foo.abc123.js`
       });
-      putObjectSpy.thirdCall.should.have.been.calledWithMatch({
+      putObjectStub.should.have.been.calledWith({
         ACL: "public-read",
-        Body: "<h1>it works</h1>\n",
+        Body: readFileSync(
+          resolve(__dirname, "..", "fixture", "dist", "index.html")
+        ),
         Bucket: "test-bucket",
         CacheControl: "max-age=60",
+        ContentType: undefined,
         Key: `v2/test-project/test/index.html`
       });
-      putObjectSpy.lastCall.should.have.been.calledWithMatch({
+      putObjectStub.should.have.been.calledWith({
         ACL: "public-read",
         Body: '{"foo.js":"foo.abc123.js"}',
         Bucket: "test-bucket",

@@ -108,7 +108,7 @@ export default class Deployer extends EventEmitter {
             client
               .putObject({
                 ACL: "public-read",
-                Body: readFileSync(filePath as string, "utf-8"),
+                Body: readFileSync(filePath as string),
                 Bucket: bucketName,
                 CacheControl: "max-age=365000000, immutable",
                 Key: `v2/__assets/${projectName}/${filename}`
@@ -130,7 +130,7 @@ export default class Deployer extends EventEmitter {
             client
               .putObject({
                 ACL: "public-read",
-                Body: readFileSync(filePath as string, "utf-8"),
+                Body: readFileSync(filePath as string),
                 Bucket: bucketName,
                 CacheControl: `max-age=${
                   typeof maxAge === "number" ? maxAge : 60
