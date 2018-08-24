@@ -33,6 +33,7 @@
   "devDependencies": {
     "@types/chai": "^4.1.4",
     "@types/mocha": "^5.2.5",
+    "@types/proxyquire": "^1.3.28",
     "@types/sinon": "^5.0.1",
     "@types/sinon-chai": "^3.2.0",
     "ava": "^0.23.0",
@@ -43,8 +44,10 @@
     "del-cli": "^1.1.0",
     "mocha": "^5.2.0",
     "node-fetch": "^1.7.3",
+    "npm-prepublish": "^1.2.3",
     "nyc": "^12.0.2",
     "prettier": "^1.14.2",
+    "proxyquire": "^2.1.0",
     "sinon": "^6.1.5",
     "sinon-chai": "^3.2.0",
     "tslint": "^5.11.0",

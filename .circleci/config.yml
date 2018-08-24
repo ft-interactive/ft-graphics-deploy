@@ -1,34 +1,88 @@
 version: 2
-jobs:
-  build:
-    working_directory: ~/project
+references:
+  default_container_config: &default_container_config
     docker:
       - image: node:8
+
+  attach_workspace: &attach_workspace
+    attach_workspace:
+      at: ~/project
+
+  npm_cache_key: &npm_cache_key v1-dependency-npm-{{ checksum "package-lock.json" }}
+
+  restore_node_modules: &restore_node_modules
+    restore_cache:
+      keys:
+        - *npm_cache_key
+        - v1-dependency-npm-
+
+  cache_node_modules: &cache_node_modules
+    save_cache:
+      key: *npm_cache_key
+      paths:
+        - $HOME/.npm
+
+  only_version_tags: &only_version_tags
+    tags:
+      only: /^v.*$/
+
+jobs:
+  install:
+    <<: *default_container_config
     steps:
       - checkout
-      - restore_cache:
-          key: node_modules-{{ checksum "package-lock.json" }}
+      - run:
+          name: Upgrade npm
+          command: npm i -g npm
+      - *restore_node_modules
       - run:
           name: Install dependencies
-          command: npm install
-      - save_cache:
-          key: node_modules-{{ checksum "package-lock.json" }}
+          command: npm ci --unsafe-perm
+      - *cache_node_modules
+      - persist_to_workspace:
+          root: .
           paths:
-            - node_modules/
+            - .
+
+  test:
+    <<: *default_container_config
+    steps:
+      - *attach_workspace
       - run:
-          name: ESLint
-          command: ./node_modules/.bin/eslint -- .
+          name: Run tests
+          command: npm test
       - run:
-          name: Compile with babel
-          command: npm run build
+          name: Upload coverage reports
+          command: npm run report-coverage
+
+  release_npm:
+    <<: *default_container_config
+    steps:
+      - *attach_workspace
       - run:
-          name: AVA tests
-          command: ./node_modules/.bin/ava
-      - store_artifacts:
-          path: dist/
-      - deploy:
-          name: Maybe publish to npm
-          command: |
-            if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              ./node_modules/.bin/ci-publish
-            fi
+          name: Setup npm credentials
+          command: echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ${HOME}/.npmrc
+      - run:
+          name: Publish npm package
+          command: ./node_modules/.bin/npm-prepublish --verbose && npm publish --access public
+
+workflows:
+  version: 2
+  build-and-release:
+    jobs:
+      - install:
+          filters:
+            <<: *only_version_tags
+      - test:
+          requires:
+            - install
+          filters:
+            <<: *only_version_tags
+      - release_npm:
+          requires:
+            - install
+            - test
+          filters:
+            <<: *only_version_tags
+            branches:
+              ignore: /.*/

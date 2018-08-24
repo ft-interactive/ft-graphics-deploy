@@ -21,6 +21,8 @@ export const verifyGitVersion = async () => {
       `Expected git version 32 or higher, but it was: "${gitVersion.version}"`
     );
   }
+
+  return gitVersion;
 };
 
 /**
