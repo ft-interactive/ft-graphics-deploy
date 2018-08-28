@@ -71,7 +71,7 @@ describe("Deployer class", () => {
         ),
         Bucket: "test-bucket",
         CacheControl: "max-age=60",
-        ContentType: undefined,
+        ContentType: "application/javascript",
         Key: `v2/test-project/test/foo.abc123.js`
       });
       putObjectStub.should.have.been.calledWith({
@@ -81,7 +81,7 @@ describe("Deployer class", () => {
         ),
         Bucket: "test-bucket",
         CacheControl: "max-age=60",
-        ContentType: undefined,
+        ContentType: "text/html",
         Key: `v2/test-project/test/index.html`
       });
       putObjectStub.should.have.been.calledWith({

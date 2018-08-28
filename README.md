@@ -1,19 +1,23 @@
-# ft-graphics-deploy [![Build Status][circle-image]][circle-url] [![npm](https://img.shields.io/npm/v/ft-graphics-deploy.svg)](https://npmjs.com/package/ft-graphics-deploy)
+# g-deploy [![Build Status][circle-image]][circle-url] [![npm](https://img.shields.io/npm/v/g-deploy.svg)](https://npmjs.com/package/g-deploy)
 
 CLI for deploying built static websites to an S3 bucket.
 
 ## How to use
 
-Requires Node 7.10 or higher.
+Requires Node 7.10 or higher. To install:
+
+```bash
+$ npm i -g @financial-times/g-deploy
+```
 
 ### Command line usage
 
 ```
-$ ft-graphics-deploy --help
+$ g-deploy --help
 
   CLI for deploying FT Graphics projects
 
-  > ft-graphics-deploy [FLAGS...]
+  > g-deploy [FLAGS...]
   ────────────────────────────────────────────────────────────────────
   All flags are optional when this command is run from a typical FT
   Graphics project repo in CI.
@@ -56,22 +60,22 @@ $ ft-graphics-deploy --help
 The most straightforward way:
 
 ```js
-import deploy from 'ft-graphics-deploy';
+import deploy from "@financial-times/g-deploy";
 
 deploy(options).then(baseURLs => {
-  console.log('uploaded to:', baseURLs);
+  console.log("uploaded to:", baseURLs);
 });
 ```
 
 For more fine-grained control:
 
 ```js
-import { Deployer } from 'ft-graphics-deploy';
+import { Deployer } from "@financial-times/g-deploy";
 
 const deployer = new Deployer(options);
 
 deployer.execute().then(baseURLs => {
-  console.log('uploaded to:', baseURLs);
+  console.log("uploaded to:", baseURLs);
 });
 ```
 
@@ -87,16 +91,14 @@ Run `yarn build -- --watch` and `yarn test -- --watch` in separate terminal tabs
 
 ### Publishing a new version to npm
 
-* Make sure you're on master: `git checkout master`
-* Update the version: `npm version patch` (or replace `patch` with `minor` or `major` as appropriate)
-  * This updates package.json, commits this single-line change, and creates a new git tag
-* Push to GitHub: `git push && git push --tags`
+- Make sure you're on master: `git checkout master`
+- Update the version: `npm version patch` (or replace `patch` with `minor` or `major` as appropriate)
+  - This updates package.json, commits this single-line change, and creates a new git tag
+- Push to GitHub: `git push && git push --tags`
 
 CircleCI will do the rest.
 
 <!-- badge URLs -->
 
-[circle-url]: https://circleci.com/gh/ft-interactive/ft-graphics-deploy
-[circle-image]: https://circleci.com/gh/ft-interactive/ft-graphics-deploy.svg?style=svg
-
-
+[circle-url]: https://circleci.com/gh/ft-interactive/g-deploy
+[circle-image]: https://circleci.com/gh/ft-interactive/g-deploy.svg?style=svg

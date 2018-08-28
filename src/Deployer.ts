@@ -8,6 +8,7 @@ import { S3 } from "aws-sdk";
 import EventEmitter from "events";
 import { createReadStream, readFileSync, writeFileSync } from "fs";
 import { sync as glob } from "glob";
+import { lookup as mime } from "mime-types";
 import { extname, resolve } from "path";
 import tmp from "tmp-promise";
 
@@ -136,7 +137,9 @@ export default class Deployer extends EventEmitter {
                   typeof maxAge === "number" ? maxAge : 60
                 }`,
                 ContentType:
-                  extname(filename as string) === "" ? "text/html" : undefined,
+                  extname(filename as string) === ""
+                    ? "text/html"
+                    : mime(extname(filename as string)) || undefined,
                 Key: `v2${
                   preview ? "-preview" : ""
                 }/${projectName}/${target}/${filename}`
