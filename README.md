@@ -4,10 +4,12 @@ CLI for deploying built static websites to an S3 bucket.
 
 ## How to use
 
-Requires Node 7.10 or higher. To install:
+Requires Node 8 or higher.
+
+To install:
 
 ```bash
-$ npm i -g @financial-times/g-deploy
+$ npm i @financial-times/g-deploy
 ```
 
 ### Command line usage
