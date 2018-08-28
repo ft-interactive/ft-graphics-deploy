@@ -1,4 +1,4 @@
-# g-deploy [![Build Status][circle-image]][circle-url] [![npm](https://img.shields.io/npm/v/g-deploy.svg)](https://npmjs.com/package/g-deploy)
+# g-deploy [![Build Status][circle-image]][circle-url] [![npm](https://img.shields.io/npm/v/@financial-times/g-deploy.svg)](https://npmjs.com/package/@financial-times/g-deploy)
 
 CLI for deploying built static websites to an S3 bucket.
 
