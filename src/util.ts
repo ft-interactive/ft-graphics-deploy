@@ -10,9 +10,9 @@ import git from "simple-git/promise";
  * Verifies the system's git is at least v1.7.0.
  */
 export const verifyGitVersion = async () => {
-  const gitVersion = semver(
-    (await git.raw(["--version"])).replace("git version ", "")
-  );
+  const gitVersionStr = (await git().raw(["--version"])).replace(/[^\d.]/g, "");
+
+  const gitVersion = semver(gitVersionStr);
 
   if (!gitVersion) {
     throw new Error("Unable to parse Git version or Git not available.");

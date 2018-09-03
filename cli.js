@@ -1,4 +1,5 @@
-#! /usr/bin/env node -r ts-node/register
+#! /usr/bin/env node
 
+require('ts-node/register');
 require('./setup');
 require('./src/cli').default();
