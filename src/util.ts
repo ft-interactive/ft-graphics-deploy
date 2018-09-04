@@ -4,7 +4,7 @@
  */
 
 import { parse as semver } from "semver";
-import git from "simple-git/promise";
+import * as git from "simple-git/promise";
 
 /**
  * Verifies the system's git is at least v1.7.0.

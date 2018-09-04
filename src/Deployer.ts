@@ -5,12 +5,11 @@
  */
 
 import { S3 } from "aws-sdk";
-import EventEmitter from "events";
+import { EventEmitter } from "events";
 import { createReadStream, readFileSync, writeFileSync } from "fs";
 import { sync as glob } from "glob";
 import { lookup as mime } from "mime-types";
 import { extname, resolve } from "path";
-import tmp from "tmp-promise";
 
 export interface IDeployerOptions {
   localDir: string; // e.g. '/path/to/dist'

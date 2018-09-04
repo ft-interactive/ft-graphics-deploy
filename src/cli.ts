@@ -4,16 +4,14 @@
  */
 
 import chalk from "chalk";
-import inquirer from "inquirer";
-import meow from "meow";
-import parseGitHubURL, { Result } from "parse-github-url";
-import simpleGit from "simple-git/promise";
+import * as inquirer from "inquirer";
+import * as meow from "meow";
+import * as parseGitHubURL from "parse-github-url";
+import * as simpleGit from "simple-git/promise";
 import Deployer, { IDeployerOptions } from "./Deployer";
 import help from "./help";
 import { verifyGitVersion, verifyOptions } from "./util";
 import vault from "./vault";
-
-const { cyan, green } = chalk;
 
 interface ICLIFlags {
   assetsPrefix?: string;
@@ -70,7 +68,7 @@ export default async () => {
         "remote.origin.url"
       ])).trim();
 
-      const { repo, host } = parseGitHubURL(originURL) as Result;
+      const { repo, host } = parseGitHubURL(originURL) as parseGitHubURL.Result;
 
       if (host !== "github.com") {
         throw new Error(
@@ -174,9 +172,9 @@ export default async () => {
   const urls = await deployer.execute();
 
   // report result
-  console.log(green("Deployment complete."));
+  console.log(chalk.green("Deployment complete."));
 
   urls.forEach((url: string) => {
-    console.log(cyan(`  ${url}`));
+    console.log(chalk.cyan(`  ${url}`));
   });
 };

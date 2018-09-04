@@ -3,7 +3,7 @@
  * Gets AWS keys from Vault
  */
 
-import nodeVault from "node-vault";
+import * as nodeVault from "node-vault";
 
 export default async function getAwsKeys(
   roleId: string,

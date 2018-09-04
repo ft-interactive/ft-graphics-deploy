@@ -4,7 +4,7 @@
  */
 
 import * as chai from "chai";
-import proxyquire from "proxyquire";
+import * as proxyquire from "proxyquire";
 import * as sinon from "sinon";
 import * as util from "../src/util";
 
@@ -23,9 +23,9 @@ describe("util functions", () => {
   describe("#verifyGitVersion()", () => {
     const gitRawStub = sinon.stub();
     const { verifyGitVersion } = proxyquire("../src/util", {
-      "simple-git/promise": {
+      "simple-git/promise": () => ({
         raw: gitRawStub
-      }
+      })
     });
 
     beforeEach(() => {
