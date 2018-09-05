@@ -7,10 +7,9 @@ import chalk from "chalk";
 import * as inquirer from "inquirer";
 import * as meow from "meow";
 import * as parseGitHubURL from "parse-github-url";
-import * as simpleGit from "simple-git/promise";
 import Deployer, { IDeployerOptions } from "./Deployer";
 import help from "./help";
-import { verifyGitVersion, verifyOptions } from "./util";
+import { git, verifyGitVersion, verifyOptions } from "./util";
 import vault from "./vault";
 
 interface ICLIFlags {
@@ -27,7 +26,7 @@ interface ICLIFlags {
   preview?: string;
   projectName?: string | null;
   sha?: string;
-  targets?: string[];
+  targets?: Array<string|undefined>;
   vaultEndpoint?: string;
   vaultRole?: string;
   vaultSecret?: string;
@@ -35,10 +34,9 @@ interface ICLIFlags {
 }
 
 export default async () => {
+  throw new Error('reject?')
   // use meow to parse CLI arguments
   const cli = meow(help);
-
-  const git = simpleGit();
 
   // define our defaults - some of which come from environment variables
   const defaults = {
@@ -62,7 +60,7 @@ export default async () => {
 
     // infer the project name from the GitHub repo name
     if (!options.projectName) {
-      const originURL = (await git.raw([
+      const originURL = (await git([
         "config",
         "--get",
         "remote.origin.url"
@@ -81,16 +79,12 @@ export default async () => {
 
     // use the SHA of the current commit
     if (!options.sha) {
-      options.sha = (await git.revparse(["--verify", "HEAD"])).trim();
+      options.sha = (await git(["rev-parse", "--verify", "HEAD"])).trim();
     }
 
     // use the name of the branch we're on now
     if (!options.branchName) {
-      options.branchName = (await git.revparse([
-        "--abbrev-ref",
-        "--verify",
-        "HEAD"
-      ])).trim();
+      options.branchName = (await git(["rev-parse", "--abbrev-ref", "--verify", "HEAD"])).trim();
     }
   }
 
@@ -102,10 +96,10 @@ export default async () => {
   ) {
     try {
       const result = await vault(
-        options.vaultRole,
-        options.vaultSecret,
-        options.vaultEndpoint,
-        options.vaultSecretPath
+        options.vaultRole as string,
+        options.vaultSecret as string,
+        options.vaultEndpoint as string,
+        options.vaultSecretPath as string,
       );
       const { AWS_KEY_PROD, AWS_SECRET_PROD } = result.data;
 
@@ -134,8 +128,6 @@ export default async () => {
 
   // convert "sha" and "branchName" options into an array of targets
   options.targets = [options.branchName, options.sha];
-  delete options.branchName;
-  delete options.sha;
 
   // Ensure the required options exist; throw otherwise
   verifyOptions(options);
@@ -154,8 +146,8 @@ export default async () => {
     "\nOptions:\n" +
       `  local dir: ${options.localDir}\n` +
       `  project name: ${options.projectName}\n` +
-      `  branch name: ${options.targets[0]}\n` +
-      `  sha: ${options.targets[1]}\n` +
+      `  branch name: ${options.branchName as string}\n` +
+      `  sha: ${options.sha as string}\n` +
       `  assets prefix: ${options.assetsPrefix}\n` +
       `  preview: ${options.preview}`
   );

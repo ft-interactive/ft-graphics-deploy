@@ -12,24 +12,28 @@ const should = chai.should();
 
 describe("util functions", () => {
   describe("exports", () => {
-    it("exports verifyGitVersion", () => {
+    it("exports verifyGitVersion()", () => {
       should.exist(util.verifyGitVersion);
     });
-    it("exports verifyOptions", () => {
+    it("exports verifyOptions()", () => {
       should.exist(util.verifyOptions);
+    });
+    it("exports git()", () => {
+      should.exist(util.git);
     });
   });
 
   describe("#verifyGitVersion()", () => {
     const gitRawStub = sinon.stub();
     const { verifyGitVersion } = proxyquire("../src/util", {
-      "simple-git/promise": () => ({
-        raw: gitRawStub
-      })
+      execa: (...args: any[]) => gitRawStub(...args)
     });
 
     beforeEach(() => {
-      gitRawStub.withArgs(["--version"]).resolves("git version 99.88.77");
+      gitRawStub.withArgs("git", ["--version"]).resolves({
+        stderr: null,
+        stdout: "git version 99.88.77"
+      });
     });
 
     afterEach(() => {
@@ -90,6 +94,31 @@ describe("util functions", () => {
           awsSecret: "test",
           bucketName: undefined
         })).should.throw();
+    });
+  });
+
+  describe("#git()", () => {
+    const execaStub = sinon.stub();
+    const { git } = proxyquire("../src/util", {
+      execa: (...args: any[]) => execaStub(...args)
+    });
+
+    beforeEach(() => {
+      execaStub.resolves({
+        stderr: null,
+        stdout: true,
+      });
+    })
+
+    afterEach(() => {
+      execaStub.reset();
+    });
+
+    it('passes the arguments to git', async () => {
+      const output = await git(['herpa', 'derpa']);
+
+      output.should.be.true;
+      execaStub.should.have.been.calledWith('git', ['herpa', 'derpa']);
     });
   });
 });

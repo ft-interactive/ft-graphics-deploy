@@ -20,7 +20,6 @@
     "parse-github-url": "^1.0.0",
     "request": "^2.88.0",
     "semver": "^5.5.1",
-    "simple-git": "^1.96.0",
     "ts-node": "^7.0.1",
     "typescript": "^3.0.1"
   },

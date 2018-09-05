@@ -3,14 +3,25 @@
  * Provides various utility functions
  */
 
+import * as execa from "execa";
 import { parse as semver } from "semver";
-import * as git from "simple-git/promise";
+
+export const git = async (args: string[]) => {
+  const { stdout, stderr } = await execa("git", args);
+  if (stderr) {
+    throw new Error(stderr);
+  } else if (!stdout) {
+    throw new Error("No git output");
+  }
+
+  return stdout;
+};
 
 /**
  * Verifies the system's git is at least v1.7.0.
  */
 export const verifyGitVersion = async () => {
-  const gitVersionStr = (await git().raw(["--version"])).replace(/[^\d.]/g, "");
+  const gitVersionStr = (await git(["--version"])).replace(/[^\d.]/g, "");
 
   const gitVersion = semver(gitVersionStr);
 
