@@ -34,7 +34,6 @@ interface ICLIFlags {
 }
 
 export default async () => {
-  throw new Error('reject?')
   // use meow to parse CLI arguments
   const cli = meow(help);
 
@@ -96,10 +95,10 @@ export default async () => {
   ) {
     try {
       const result = await vault(
-        options.vaultRole as string,
-        options.vaultSecret as string,
-        options.vaultEndpoint as string,
-        options.vaultSecretPath as string,
+        options.vaultRole,
+        options.vaultSecret,
+        options.vaultEndpoint,
+        options.vaultSecretPath,
       );
       const { AWS_KEY_PROD, AWS_SECRET_PROD } = result.data;
 
