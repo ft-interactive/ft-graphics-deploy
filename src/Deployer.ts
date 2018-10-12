@@ -27,6 +27,8 @@ export interface IDeployerOptions {
   maxAge?: number; // for everything except revved assets
 
   assetsPrefix?: string; // e.g. "https://example.com/v2/__assets/"
+
+  otherOptions?: object; // pass in any other params that aws-sdk supports
 }
 
 interface IRevManifest {
@@ -54,7 +56,8 @@ export default class Deployer extends EventEmitter {
       targets,
       preview,
       assetsPrefix,
-      maxAge
+      maxAge,
+      otherOptions,
     } = this.options;
 
     // load in the rev-manifest
@@ -111,7 +114,8 @@ export default class Deployer extends EventEmitter {
                 Body: readFileSync(filePath as string),
                 Bucket: bucketName,
                 CacheControl: "max-age=365000000, immutable",
-                Key: `v2/__assets/${projectName}/${filename}`
+                Key: `v2/__assets/${projectName}/${filename}`,
+                ...otherOptions,
               })
               .promise()
           )
@@ -141,7 +145,8 @@ export default class Deployer extends EventEmitter {
                     : mime(extname(filename as string)) || undefined,
                 Key: `v2${
                   preview ? "-preview" : ""
-                }/${projectName}/${target}/${filename}`
+                }/${projectName}/${target}/${filename}`,
+                ...otherOptions,
               })
               .promise()
           )
@@ -161,7 +166,8 @@ export default class Deployer extends EventEmitter {
             ContentType: "application/json",
             Key: `v2${
               preview ? "-preview" : ""
-            }/${projectName}/${target}/${REV_MANIFEST_FILENAME}`
+            }/${projectName}/${target}/${REV_MANIFEST_FILENAME}`,
+            ...otherOptions,
           })
           .promise()
           .then(() =>
