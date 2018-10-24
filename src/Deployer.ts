@@ -22,6 +22,8 @@ export interface IDeployerOptions {
 
   targets: string[]; // for reference, the CLI provides two targets: the commit sha and branch name
 
+  path?: string; // Set arbitrary S3 prefix instead of using existing path logic
+
   preview?: boolean;
 
   maxAge?: number; // for everything except revved assets
@@ -54,11 +56,20 @@ export default class Deployer extends EventEmitter {
       awsSecret,
       awsRegion,
       targets,
+      path,
       preview,
       assetsPrefix,
       maxAge,
-      otherOptions,
+      otherOptions
     } = this.options;
+
+    if (path && (path.startsWith("/") || path.endsWith("/"))) {
+      throw new Error(
+        "Please provide `path` without leading or trailing slashes."
+      );
+    } else if (path) {
+      console.warn("Using the `path` option. PLEASE BE VERY CAREFUL WITH THIS.");
+    }
 
     // load in the rev-manifest
     const revManifest: IRevManifest | null = (() => {
@@ -83,9 +94,15 @@ export default class Deployer extends EventEmitter {
         );
       }
 
-      Object.keys(revManifest).forEach(key => {
-        modifiedRevManifest[key] = `${assetsPrefix}${revManifest[key]}`;
-      });
+      if (path) {
+        Object.keys(revManifest).forEach(key => {
+          modifiedRevManifest[key] = `${path}/${revManifest[key]}`;
+        });
+      } else {
+        Object.keys(revManifest).forEach(key => {
+          modifiedRevManifest[key] = `${assetsPrefix}${revManifest[key]}`;
+        });
+      }
     }
 
     const revvedFiles = revManifest && Object.values(modifiedRevManifest);
@@ -114,15 +131,19 @@ export default class Deployer extends EventEmitter {
                 Body: readFileSync(filePath as string),
                 Bucket: bucketName,
                 CacheControl: "max-age=365000000, immutable",
-                Key: `v2/__assets/${projectName}/${filename}`,
-                ...otherOptions,
+                Key: path
+                  ? `${path}/${filename}`
+                  : `v2/__assets/${projectName}/${filename}`,
+                ...otherOptions
               })
               .promise()
           )
       ).then(() => this.emit("uploaded", { info: "assets" }));
     }
 
-    await targets.reduce(async (queue: Promise<any[]>, target: string) => {
+    const prefixes = path ? [path] : targets;
+
+    await prefixes.reduce(async (queue: Promise<any[]>, target: string) => {
       const acc = await queue;
       const uploadedTarget = Promise.all(
         allFiles
@@ -143,10 +164,12 @@ export default class Deployer extends EventEmitter {
                   extname(filename as string) === ""
                     ? "text/html"
                     : mime(extname(filename as string)) || undefined,
-                Key: `v2${
-                  preview ? "-preview" : ""
-                }/${projectName}/${target}/${filename}`,
-                ...otherOptions,
+                Key: path
+                  ? `${path}/${filename}`
+                  : `v2${
+                      preview ? "-preview" : ""
+                    }/${projectName}/${target}/${filename}`,
+                ...otherOptions
               })
               .promise()
           )
@@ -164,10 +187,12 @@ export default class Deployer extends EventEmitter {
             Bucket: bucketName,
             CacheControl: `max-age=${typeof maxAge === "number" ? maxAge : 60}`,
             ContentType: "application/json",
-            Key: `v2${
-              preview ? "-preview" : ""
-            }/${projectName}/${target}/${REV_MANIFEST_FILENAME}`,
-            ...otherOptions,
+            Key: path
+              ? `${path}/${REV_MANIFEST_FILENAME}`
+              : `v2${
+                  preview ? "-preview" : ""
+                }/${projectName}/${target}/${REV_MANIFEST_FILENAME}`,
+            ...otherOptions
           })
           .promise()
           .then(() =>
@@ -189,8 +214,13 @@ export default class Deployer extends EventEmitter {
       projectName,
       awsRegion,
       targets,
+      path,
       preview
     } = this.options;
+
+    if (path) {
+      return [`http://${bucketName}.s3-website-${awsRegion}.amazonaws.com/${path}/`]
+    }
 
     return targets.map(
       target =>

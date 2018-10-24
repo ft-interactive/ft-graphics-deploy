@@ -23,6 +23,7 @@ interface ICLIFlags {
   getBranchUrl?: boolean;
   getCommitUrl?: boolean;
   localDir?: string;
+  path?: string;
   preview?: string;
   projectName?: string | null;
   sha?: string;
@@ -44,6 +45,7 @@ export default async () => {
     awsSecret: process.env.AWS_SECRET_PROD,
     bucketName: process.env.BUCKET_NAME_PROD,
     localDir: "dist",
+    path: undefined,
     preview: false,
     vaultEndpoint: process.env.VAULT_ENDPOINT,
     vaultRole: process.env.VAULT_ROLE,
@@ -148,7 +150,8 @@ export default async () => {
       `  branch name: ${options.branchName as string}\n` +
       `  sha: ${options.sha as string}\n` +
       `  assets prefix: ${options.assetsPrefix}\n` +
-      `  preview: ${options.preview}`
+      `  preview: ${options.preview}` +
+      options.path ? `  path (BE CAREFUL): ${options.path}` : ''
   );
 
   // ask for confirmation
