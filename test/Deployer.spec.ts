@@ -31,13 +31,13 @@ describe("Deployer class", () => {
       awsRegion: "eu-west-1",
       bucketName: "test-bucket",
       localDir: resolve(__dirname, "..", "fixture", "dist"),
-      projectName: "test-project",
-      targets: ["test"],
       otherOptions: {
         Metadata: {
-          'x-amz-meta-surrogate-key': 'my-key',
-        },
+          "x-amz-meta-surrogate-key": "my-key"
+        }
       },
+      projectName: "test-project",
+      targets: ["test"],
     });
   });
 
@@ -68,7 +68,7 @@ describe("Deployer class", () => {
         Bucket: "test-bucket",
         CacheControl: "max-age=365000000, immutable",
         Key: `v2/__assets/test-project/foo.abc123.js`,
-        Metadata: { 'x-amz-meta-surrogate-key': "my-key" }
+        Metadata: { "x-amz-meta-surrogate-key": "my-key" }
       });
       putObjectStub.should.have.been.calledWith({
         ACL: "public-read",
@@ -79,7 +79,7 @@ describe("Deployer class", () => {
         CacheControl: "max-age=60",
         ContentType: "application/javascript",
         Key: `v2/test-project/test/foo.abc123.js`,
-        Metadata: { 'x-amz-meta-surrogate-key': "my-key" }
+        Metadata: { "x-amz-meta-surrogate-key": "my-key" }
       });
       putObjectStub.should.have.been.calledWith({
         ACL: "public-read",
@@ -90,7 +90,7 @@ describe("Deployer class", () => {
         CacheControl: "max-age=60",
         ContentType: "text/html",
         Key: `v2/test-project/test/index.html`,
-        Metadata: { 'x-amz-meta-surrogate-key': "my-key" }
+        Metadata: { "x-amz-meta-surrogate-key": "my-key" }
       });
       putObjectStub.should.have.been.calledWith({
         ACL: "public-read",
@@ -99,8 +99,92 @@ describe("Deployer class", () => {
         CacheControl: "max-age=60",
         ContentType: "application/json",
         Key: "v2/test-project/test/rev-manifest.json",
-        Metadata: { 'x-amz-meta-surrogate-key': "my-key" }
+        Metadata: { "x-amz-meta-surrogate-key": "my-key" }
       });
+    });
+
+    it("allows arbitrary paths", async () => {
+      const newInst = new Deployer({
+        assetsPrefix: "https://ig.ft.com/v2/__assets/",
+        awsRegion: "eu-west-1",
+        bucketName: "test-bucket",
+        localDir: resolve(__dirname, "..", "fixture", "dist"),
+        path: "__arbitrary-path-test"
+      });
+
+      const res = await newInst.execute();
+
+      res.should.be.a("array");
+      res[0].should.equal(
+        "http://test-bucket.s3-website-eu-west-1.amazonaws.com/__arbitrary-path-test/"
+      );
+      putObjectStub.callCount.should.equal(4);
+      putObjectStub.should.have.been.calledWith({
+        ACL: "public-read",
+        Body: readFileSync(
+          resolve(__dirname, "..", "fixture", "dist", "foo.abc123.js")
+        ),
+        Bucket: "test-bucket",
+        CacheControl: "max-age=365000000, immutable",
+        Key: `__arbitrary-path-test/foo.abc123.js`
+      });
+      putObjectStub.should.have.been.calledWith({
+        ACL: "public-read",
+        Body: readFileSync(
+          resolve(__dirname, "..", "fixture", "dist", "foo.abc123.js")
+        ),
+        Bucket: "test-bucket",
+        CacheControl: "max-age=60",
+        ContentType: "application/javascript",
+        Key: `__arbitrary-path-test/foo.abc123.js`
+      });
+      putObjectStub.should.have.been.calledWith({
+        ACL: "public-read",
+        Body: readFileSync(
+          resolve(__dirname, "..", "fixture", "dist", "index.html")
+        ),
+        Bucket: "test-bucket",
+        CacheControl: "max-age=60",
+        ContentType: "text/html",
+        Key: `__arbitrary-path-test/index.html`
+      });
+      putObjectStub.should.have.been.calledWith({
+        ACL: "public-read",
+        Body: '{"foo.js":"foo.abc123.js"}',
+        Bucket: "test-bucket",
+        CacheControl: "max-age=60",
+        ContentType: "application/json",
+        Key: "__arbitrary-path-test/rev-manifest.json"
+      });
+    });
+
+    it("rejects if `path` opt has trailing or leading slashes", async () => {
+      const trailing = new Deployer({
+        path: "__arbitrary-path-test/"
+      });
+      const leading = new Deployer({
+        path: "__arbitrary-path-test/"
+      });
+
+      try {
+        await trailing.execute();
+        throw new Error("This should have already thrown");
+      } catch (e) {
+        should.exist(e);
+        e.message.should.equal(
+          "Please provide `path` without leading or trailing slashes."
+        );
+      }
+
+      try {
+        await leading.execute();
+        throw new Error("This should have already thrown");
+      } catch (e) {
+        should.exist(e);
+        e.message.should.equal(
+          "Please provide `path` without leading or trailing slashes."
+        );
+      }
     });
   });
 
