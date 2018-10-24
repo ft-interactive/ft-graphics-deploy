@@ -46,6 +46,7 @@ $ g-deploy --help
     --sha - unique reference for this commit
     --branch-name - name of the branch you are deploying
     --local-dir - what to upload; defaults to ./dist
+    --prefix - ignore all path handling and explicitly set prefix. BE *VERY* CAREFUL WITH THIS.
     --preview - upload files to preview folder
     --assets-prefix - base for asset URLs; affects the rev-manifest and all
                       HTML/CSS files

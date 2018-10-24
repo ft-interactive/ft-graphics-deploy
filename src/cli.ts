@@ -23,6 +23,7 @@ interface ICLIFlags {
   getBranchUrl?: boolean;
   getCommitUrl?: boolean;
   localDir?: string;
+  prefix?: string;
   preview?: string;
   projectName?: string | null;
   sha?: string;
@@ -44,7 +45,8 @@ export default async () => {
     awsSecret: process.env.AWS_SECRET_PROD,
     bucketName: process.env.BUCKET_NAME_PROD,
     localDir: "dist",
-    preview: false,
+    prefix: false,
+    preview: undefined,
     vaultEndpoint: process.env.VAULT_ENDPOINT,
     vaultRole: process.env.VAULT_ROLE,
     vaultSecret: process.env.VAULT_SECRET,

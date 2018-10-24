@@ -93,6 +93,61 @@ describe("Deployer class", () => {
         Key: "v2/test-project/test/rev-manifest.json"
       });
     });
+
+    it("allows arbitrary key values", async () => {
+      const newInst = new Deployer({
+        assetsPrefix: "https://ig.ft.com/v2/__assets/",
+        awsRegion: "eu-west-1",
+        bucketName: "test-bucket",
+        localDir: resolve(__dirname, "..", "fixture", "dist"),
+        prefix: "__arbitrary-key-test"
+      });
+
+      const res = await newInst.execute();
+
+      res.should.be.a("array");
+      res[0].should.equal(
+        "http://test-bucket.s3-website-eu-west-1.amazonaws.com/__arbitrary-key-test/"
+      );
+      putObjectStub.callCount.should.equal(4);
+      putObjectStub.should.have.been.calledWith({
+        ACL: "public-read",
+        Body: readFileSync(
+          resolve(__dirname, "..", "fixture", "dist", "foo.abc123.js")
+        ),
+        Bucket: "test-bucket",
+        CacheControl: "max-age=365000000, immutable",
+        Key: `__arbitrary-key-test/foo.abc123.js`
+      });
+      putObjectStub.should.have.been.calledWith({
+        ACL: "public-read",
+        Body: readFileSync(
+          resolve(__dirname, "..", "fixture", "dist", "foo.abc123.js")
+        ),
+        Bucket: "test-bucket",
+        CacheControl: "max-age=60",
+        ContentType: "application/javascript",
+        Key: `__arbitrary-key-test/foo.abc123.js`
+      });
+      putObjectStub.should.have.been.calledWith({
+        ACL: "public-read",
+        Body: readFileSync(
+          resolve(__dirname, "..", "fixture", "dist", "index.html")
+        ),
+        Bucket: "test-bucket",
+        CacheControl: "max-age=60",
+        ContentType: "text/html",
+        Key: `__arbitrary-key-test/index.html`
+      });
+      putObjectStub.should.have.been.calledWith({
+        ACL: "public-read",
+        Body: '{"foo.js":"foo.abc123.js"}',
+        Bucket: "test-bucket",
+        CacheControl: "max-age=60",
+        ContentType: "application/json",
+        Key: "__arbitrary-key-test/rev-manifest.json"
+      });
+    });
   });
 
   describe("#getURLs()", () => {

@@ -27,6 +27,8 @@ export interface IDeployerOptions {
   maxAge?: number; // for everything except revved assets
 
   assetsPrefix?: string; // e.g. "https://example.com/v2/__assets/"
+
+  prefix?: string; // Overrides everything else when constructing S3 prefix
 }
 
 interface IRevManifest {
@@ -54,7 +56,8 @@ export default class Deployer extends EventEmitter {
       targets,
       preview,
       assetsPrefix,
-      maxAge
+      maxAge,
+      prefix
     } = this.options;
 
     // load in the rev-manifest
@@ -111,15 +114,16 @@ export default class Deployer extends EventEmitter {
                 Body: readFileSync(filePath as string),
                 Bucket: bucketName,
                 CacheControl: "max-age=365000000, immutable",
-                Key: `v2/__assets/${projectName}/${filename}`
+                Key: prefix
+                  ? `${prefix}/${filename}`
+                  : `v2/__assets/${projectName}/${filename}`
               })
               .promise()
           )
       ).then(() => this.emit("uploaded", { info: "assets" }));
     }
 
-    await targets.reduce(async (queue: Promise<any[]>, target: string) => {
-      const acc = await queue;
+    if (prefix) {
       const uploadedTarget = Promise.all(
         allFiles
           .filter(
@@ -139,18 +143,15 @@ export default class Deployer extends EventEmitter {
                   extname(filename as string) === ""
                     ? "text/html"
                     : mime(extname(filename as string)) || undefined,
-                Key: `v2${
-                  preview ? "-preview" : ""
-                }/${projectName}/${target}/${filename}`
+                Key: `${prefix}/${filename}`
               })
               .promise()
           )
       ).then(() => {
         this.emit("uploaded", {
-          info: `${target} (bundle)`
+          info: `${prefix} (bundle)`
         });
       });
-
       if (revManifest) {
         await client
           .putObject({
@@ -159,17 +160,75 @@ export default class Deployer extends EventEmitter {
             Bucket: bucketName,
             CacheControl: `max-age=${typeof maxAge === "number" ? maxAge : 60}`,
             ContentType: "application/json",
-            Key: `v2${
-              preview ? "-preview" : ""
-            }/${projectName}/${target}/${REV_MANIFEST_FILENAME}`
+            Key: `${prefix}/${REV_MANIFEST_FILENAME}`
           })
           .promise()
           .then(() =>
-            this.emit("uploaded", { info: `${target} (modified rev-manifest)` })
+            this.emit("uploaded", { info: `${prefix} (modified rev-manifest)` })
           );
       }
-      return [...acc, await uploadedTarget];
-    }, Promise.resolve([]));
+
+      console.warn("Uploaded using `prefix`. I SURE HOPE YOU KNOW WHAT YOU'RE DOING!!!");
+    } else if (targets) {
+      await targets.reduce(async (queue: Promise<any[]>, target: string) => {
+        const acc = await queue;
+        const uploadedTarget = Promise.all(
+          allFiles
+            .filter(
+              ([, filename]) =>
+                filename && !filename.includes(REV_MANIFEST_FILENAME)
+            )
+            .map(([filePath, filename]) =>
+              client
+                .putObject({
+                  ACL: "public-read",
+                  Body: readFileSync(filePath as string),
+                  Bucket: bucketName,
+                  CacheControl: `max-age=${
+                    typeof maxAge === "number" ? maxAge : 60
+                  }`,
+                  ContentType:
+                    extname(filename as string) === ""
+                      ? "text/html"
+                      : mime(extname(filename as string)) || undefined,
+                  Key: `v2${
+                    preview ? "-preview" : ""
+                  }/${projectName}/${target}/${filename}`
+                })
+                .promise()
+            )
+        ).then(() => {
+          this.emit("uploaded", {
+            info: `${target} (bundle)`
+          });
+        });
+
+        if (revManifest) {
+          await client
+            .putObject({
+              ACL: "public-read",
+              Body: JSON.stringify(revManifest),
+              Bucket: bucketName,
+              CacheControl: `max-age=${
+                typeof maxAge === "number" ? maxAge : 60
+              }`,
+              ContentType: "application/json",
+              Key: `v2${
+                preview ? "-preview" : ""
+              }/${projectName}/${target}/${REV_MANIFEST_FILENAME}`
+            })
+            .promise()
+            .then(() =>
+              this.emit("uploaded", {
+                info: `${target} (modified rev-manifest)`
+              })
+            );
+        }
+        return [...acc, await uploadedTarget];
+      }, Promise.resolve([]));
+    } else {
+      throw new Error("You must provide either `prefix` or `targets`.");
+    }
 
     return this.getURLs();
   }
@@ -183,14 +242,20 @@ export default class Deployer extends EventEmitter {
       projectName,
       awsRegion,
       targets,
-      preview
+      preview,
+      prefix
     } = this.options;
-
-    return targets.map(
-      target =>
-        `http://${bucketName}.s3-website-${awsRegion}.amazonaws.com/v2${
-          preview ? "-preview" : ""
-        }/${projectName}/${target}/`
-    );
+    if (prefix) {
+      return [`http://${bucketName}.s3-website-${awsRegion}.amazonaws.com/${prefix}/`];
+    } else if (targets) {
+      return targets.map(
+        target =>
+          `http://${bucketName}.s3-website-${awsRegion}.amazonaws.com/v2${
+            preview ? "-preview" : ""
+          }/${projectName}/${target}/`
+      );
+    } else {
+      throw new Error("You must provide either `targets` or `prefix`.");
+    }
   }
 }
