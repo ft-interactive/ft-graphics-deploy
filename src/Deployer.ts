@@ -29,6 +29,8 @@ export interface IDeployerOptions {
   assetsPrefix?: string; // e.g. "https://example.com/v2/__assets/"
 
   prefix?: string; // Overrides everything else when constructing S3 prefix
+
+  otherOptions?: object; // pass in any other params that aws-sdk supports
 }
 
 interface IRevManifest {
@@ -57,7 +59,8 @@ export default class Deployer extends EventEmitter {
       preview,
       assetsPrefix,
       maxAge,
-      prefix
+      prefix,
+      otherOptions,
     } = this.options;
 
     // load in the rev-manifest
@@ -117,6 +120,7 @@ export default class Deployer extends EventEmitter {
                 Key: prefix
                   ? `${prefix}/${filename}`
                   : `v2/__assets/${projectName}/${filename}`
+                ...otherOptions,
               })
               .promise()
           )
@@ -143,7 +147,8 @@ export default class Deployer extends EventEmitter {
                   extname(filename as string) === ""
                     ? "text/html"
                     : mime(extname(filename as string)) || undefined,
-                Key: `${prefix}/${filename}`
+                Key: `${prefix}/${filename}`,
+                ...otherOptions,
               })
               .promise()
           )
@@ -160,7 +165,8 @@ export default class Deployer extends EventEmitter {
             Bucket: bucketName,
             CacheControl: `max-age=${typeof maxAge === "number" ? maxAge : 60}`,
             ContentType: "application/json",
-            Key: `${prefix}/${REV_MANIFEST_FILENAME}`
+            Key: `${prefix}/${REV_MANIFEST_FILENAME}`,
+            ...otherOptions
           })
           .promise()
           .then(() =>

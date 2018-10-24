@@ -95,9 +95,9 @@ Run `yarn build -- --watch` and `yarn test -- --watch` in separate terminal tabs
 ### Publishing a new version to npm
 
 - Make sure you're on master: `git checkout master`
-- Update the version: `npm version patch` (or replace `patch` with `minor` or `major` as appropriate)
-  - This updates package.json, commits this single-line change, and creates a new git tag
-- Push to GitHub: `git push && git push --tags`
+- `git fetch --tags`
+- `git tag v<new version number>`
+- `git push origin v<new version number>`
 
 CircleCI will do the rest.
 

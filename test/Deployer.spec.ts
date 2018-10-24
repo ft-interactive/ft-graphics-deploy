@@ -32,7 +32,12 @@ describe("Deployer class", () => {
       bucketName: "test-bucket",
       localDir: resolve(__dirname, "..", "fixture", "dist"),
       projectName: "test-project",
-      targets: ["test"]
+      targets: ["test"],
+      otherOptions: {
+        Metadata: {
+          'x-amz-meta-surrogate-key': 'my-key',
+        },
+      },
     });
   });
 
@@ -62,7 +67,8 @@ describe("Deployer class", () => {
         ),
         Bucket: "test-bucket",
         CacheControl: "max-age=365000000, immutable",
-        Key: `v2/__assets/test-project/foo.abc123.js`
+        Key: `v2/__assets/test-project/foo.abc123.js`,
+        Metadata: { 'x-amz-meta-surrogate-key': "my-key" }
       });
       putObjectStub.should.have.been.calledWith({
         ACL: "public-read",
@@ -72,7 +78,8 @@ describe("Deployer class", () => {
         Bucket: "test-bucket",
         CacheControl: "max-age=60",
         ContentType: "application/javascript",
-        Key: `v2/test-project/test/foo.abc123.js`
+        Key: `v2/test-project/test/foo.abc123.js`,
+        Metadata: { 'x-amz-meta-surrogate-key': "my-key" }
       });
       putObjectStub.should.have.been.calledWith({
         ACL: "public-read",
@@ -82,7 +89,8 @@ describe("Deployer class", () => {
         Bucket: "test-bucket",
         CacheControl: "max-age=60",
         ContentType: "text/html",
-        Key: `v2/test-project/test/index.html`
+        Key: `v2/test-project/test/index.html`,
+        Metadata: { 'x-amz-meta-surrogate-key': "my-key" }
       });
       putObjectStub.should.have.been.calledWith({
         ACL: "public-read",
@@ -90,7 +98,8 @@ describe("Deployer class", () => {
         Bucket: "test-bucket",
         CacheControl: "max-age=60",
         ContentType: "application/json",
-        Key: "v2/test-project/test/rev-manifest.json"
+        Key: "v2/test-project/test/rev-manifest.json",
+        Metadata: { 'x-amz-meta-surrogate-key': "my-key" }
       });
     });
 
