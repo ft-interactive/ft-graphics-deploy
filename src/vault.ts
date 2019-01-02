@@ -23,14 +23,7 @@ export default async function getAwsKeys(
 
     vault.token = result.auth.client_token;
 
-    return vault.read(
-      `${secretPath}/${
-        process.env.CIRCLE_PROJECT_REPONAME &&
-        process.env.CIRCLE_PROJECT_REPONAME === "ft-graphics-deploy"
-          ? "testing"
-          : "latest"
-      }`
-    );
+    return vault.read(secretPath);
   } catch (e) {
     throw e;
   }
