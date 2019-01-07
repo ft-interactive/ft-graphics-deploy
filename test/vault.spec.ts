@@ -4,61 +4,42 @@
  */
 
 import * as chai from "chai";
-import * as proxyquire from "proxyquire";
-import * as sinon from "sinon";
-import * as sinonChai from "sinon-chai";
+import * as moxios from "moxios";
+import vault from "../src/vault";
 
-chai.use(sinonChai);
-const should = chai.should();
+chai.should();
 
 describe("Vault functionality", () => {
-  const vaultApproleLoginStub = sinon.stub();
-  const vaultReadStub = sinon.stub();
-  const vaultStub = sinon.stub().returns({
-    approleLogin: vaultApproleLoginStub,
-    read: vaultReadStub
-  });
-
-  const vault = proxyquire("../src/vault", {
-    "node-vault": vaultStub
-  }).default;
-
-  describe("exports", () => {
-    it("exports default", () => {
-      should.exist(vault);
-    });
+  beforeEach(() => {
+    // import and pass your custom axios instance to this method
+    moxios.install();
   });
 
   describe("default export", () => {
-    // console.dir(nodeVault.default);
-
     const roleId = "test-role";
     const secretId = "test-secret";
-    const endpoint = "test-endpoint";
+    const endpoint = "http://test-endpoint";
     const secretPath = "test-secret-path";
 
     beforeEach(() => {
-      vaultStub.returns({
-        approleLogin: vaultApproleLoginStub,
-        read: vaultReadStub
+      moxios.stubRequest(`${endpoint}/v1/auth/approle/login`, {
+        response: {
+          auth: {
+            client_token: "whee"
+          }
+        },
+        status: 200
       });
 
-      vaultApproleLoginStub.resolves({
-        auth: {
-          client_token: "test-token"
-        }
+      moxios.stubRequest(`${endpoint}/v1/test-secret-path`, {
+        response: {
+          data: {
+            AWS_KEY_PROD: "test",
+            AWS_SECRET_PROD: "test"
+          }
+        },
+        status: 200
       });
-
-      vaultReadStub.resolves({
-        data: {
-          AWS_KEY_PROD: "test",
-          AWS_SECRET_PROD: "test"
-        }
-      });
-    });
-
-    afterEach(() => {
-      sinon.reset();
     });
 
     it("requests credentials from Vault", async () => {

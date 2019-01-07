@@ -27,7 +27,7 @@ interface ICLIFlags {
   preview?: string;
   projectName?: string | null;
   sha?: string;
-  targets?: Array<string|undefined>;
+  targets?: Array<string | undefined>;
   vaultEndpoint?: string;
   vaultRole?: string;
   vaultSecret?: string;
@@ -85,7 +85,12 @@ export default async () => {
 
     // use the name of the branch we're on now
     if (!options.branchName) {
-      options.branchName = (await git(["rev-parse", "--abbrev-ref", "--verify", "HEAD"])).trim();
+      options.branchName = (await git([
+        "rev-parse",
+        "--abbrev-ref",
+        "--verify",
+        "HEAD"
+      ])).trim();
     }
   }
 
@@ -100,7 +105,7 @@ export default async () => {
         options.vaultRole,
         options.vaultSecret,
         options.vaultEndpoint,
-        options.vaultSecretPath,
+        options.vaultSecretPath
       );
       const { AWS_KEY_PROD, AWS_SECRET_PROD } = result.data;
 
@@ -150,9 +155,12 @@ export default async () => {
       `  branch name: ${options.branchName as string}\n` +
       `  sha: ${options.sha as string}\n` +
       `  assets prefix: ${options.assetsPrefix}\n` +
-      `  preview: ${options.preview}` +
-      options.path ? `  path (BE CAREFUL): ${options.path}` : ''
+      `  preview: ${options.preview}`
   );
+
+  if (options.path) {
+    console.log(`  path (BE CAREFUL): ${options.path}`);
+  }
 
   // ask for confirmation
   if (

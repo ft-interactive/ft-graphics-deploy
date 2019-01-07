@@ -3,7 +3,7 @@
  * Gets AWS keys from Vault
  */
 
-import * as nodeVault from "node-vault";
+import axios from "axios";
 
 export default async function getAwsKeys(
   roleId: string,
@@ -11,19 +11,15 @@ export default async function getAwsKeys(
   endpoint: string,
   secretPath: string
 ) {
-  const vault = nodeVault({
-    endpoint
-  });
-
   try {
-    const result = await vault.approleLogin({
+    const { data } = await axios.post(`${endpoint}/v1/auth/approle/login`, {
       role_id: roleId,
       secret_id: secretId
     });
 
-    vault.token = result.auth.client_token;
+    const token = data.auth.client_token;
 
-    return vault.read(secretPath);
+    return (await axios.get(`${endpoint}/v1/${secretPath}`)).data;
   } catch (e) {
     throw e;
   }
