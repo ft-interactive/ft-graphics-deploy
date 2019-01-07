@@ -46,19 +46,19 @@ export const verifyOptions = ({
   bucketName
 }: IVerifyOptions) => {
   if (!awsKey) {
-    throw new Error("You forgot to specify an AWS_ACCESS_KEY_ID.");
+    throw new Error("Could not find an AWS access key ID.");
   }
 
   if (!awsSecret) {
-    throw new Error("You forgot to specify an AWS_SECRET_ACCESS_KEY.");
+    throw new Error("Could not find an AWS secret access key.");
   }
 
   if (!awsRegion) {
-    throw new Error("You forgot to specify an AWS_REGION.");
+    throw new Error("Could not find an AWS region.");
   }
 
   if (!bucketName) {
-    throw new Error("You forgot to specify a S3 bucket.");
+    throw new Error("Could not find an AWS S3 bucket name.");
   }
 };
 
