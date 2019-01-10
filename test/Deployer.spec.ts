@@ -37,7 +37,7 @@ describe("Deployer class", () => {
         }
       },
       projectName: "test-project",
-      targets: ["test"],
+      targets: ["test"]
     });
   });
 
@@ -51,7 +51,7 @@ describe("Deployer class", () => {
     });
   });
 
-  xdescribe("#execute()", () => {
+  describe("#execute()", () => {
     it("uploads expected files to S3", async () => {
       const res = await inst.execute();
 
@@ -99,6 +99,25 @@ describe("Deployer class", () => {
         CacheControl: "max-age=60",
         ContentType: "application/json",
         Key: "v2/test-project/test/rev-manifest.json",
+        Metadata: { "x-amz-meta-surrogate-key": "my-key" }
+      });
+
+      putObjectStub.should.have.been.calledWith({
+        ACL: "public-read",
+        Body: readFileSync(
+          resolve(
+            __dirname,
+            "..",
+            "fixture",
+            "dist",
+            "test.directory",
+            "test.file"
+          )
+        ),
+        Bucket: "test-bucket",
+        CacheControl: "max-age=60",
+        ContentType: undefined,
+        Key: `v2/test-project/test/test.directory/test.file`,
         Metadata: { "x-amz-meta-surrogate-key": "my-key" }
       });
     });
