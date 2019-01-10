@@ -114,7 +114,7 @@ export default class Deployer extends EventEmitter {
       secretAccessKey: awsSecret
     });
 
-    const allFiles: string[][] = glob(`${localDir}/**/*.*`)
+    const allFiles: string[][] = glob(`${localDir}/**/*`, { nodir: true })
       .filter(filePath => !filePath.includes(REV_MANIFEST_FILENAME))
       .map(filePath => [filePath, filePath.replace(`${localDir}/`, "")]);
 
