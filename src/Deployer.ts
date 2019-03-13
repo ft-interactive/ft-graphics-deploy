@@ -151,8 +151,16 @@ export default class Deployer extends EventEmitter {
             ([, filename]) =>
               filename && !filename.includes(REV_MANIFEST_FILENAME)
           )
-          .map(([filePath, filename]) =>
-            client
+          .map(([filePath, filename]) => {
+            const mimeType = extname(filename as string) === ""
+            ? "text/html"
+            : mime(extname(filename as string)) || undefined;
+
+            const ContentType = mimeType && mimeType.includes('text') 
+              ? `${mimeType}; charset=utf-8` 
+              : mimeType;
+
+            return client
               .putObject({
                 ACL: "public-read",
                 Body: readFileSync(filePath as string),
@@ -160,10 +168,7 @@ export default class Deployer extends EventEmitter {
                 CacheControl: `max-age=${
                   typeof maxAge === "number" ? maxAge : 60
                 }`,
-                ContentType:
-                  extname(filename as string) === ""
-                    ? "text/html"
-                    : mime(extname(filename as string)) || undefined,
+                ContentType,
                 Key: path
                   ? `${path}/${filename}`
                   : `v2${
@@ -172,7 +177,7 @@ export default class Deployer extends EventEmitter {
                 ...otherOptions
               })
               .promise()
-          )
+          })
       ).then(() => {
         this.emit("uploaded", {
           info: `${target} (bundle)`

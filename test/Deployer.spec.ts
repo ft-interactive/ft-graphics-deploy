@@ -88,7 +88,7 @@ describe("Deployer class", () => {
         ),
         Bucket: "test-bucket",
         CacheControl: "max-age=60",
-        ContentType: "text/html",
+        ContentType: "text/html; charset=utf-8",
         Key: `v2/test-project/test/index.html`,
         Metadata: { "x-amz-meta-surrogate-key": "my-key" }
       });
@@ -164,7 +164,7 @@ describe("Deployer class", () => {
         ),
         Bucket: "test-bucket",
         CacheControl: "max-age=60",
-        ContentType: "text/html",
+        ContentType: "text/html; charset=utf-8",
         Key: `__arbitrary-path-test/index.html`
       });
       putObjectStub.should.have.been.calledWith({
