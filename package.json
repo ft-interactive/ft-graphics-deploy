@@ -68,7 +68,7 @@
   ],
   "license": "MIT",
   "main": "dist",
-  "repository": "ft-interactive/g-deploy",
+  "repository": "financial-times/g-deploy",
   "scripts": {
     "build": "tsc",
     "prepare": "npm test && npm run build",
