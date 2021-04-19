@@ -15,7 +15,7 @@
     "execa": "^0.8.0",
     "figures": "^2.0.0",
     "glob": "^7.1.2",
-    "inquirer": "^6.1.0",
+    "inquirer": "^6.5.2",
     "meow": "^5.0.0",
     "mime-types": "^2.1.19",
     "parse-github-url": "^1.0.0",
