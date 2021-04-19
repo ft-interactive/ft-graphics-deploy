@@ -9,7 +9,7 @@
   "dependencies": {
     "@types/moxios": "^0.4.8",
     "aws-sdk": "^2.296.0",
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "chalk": "^2.4.1",
     "dotenv": "^4.0.0",
     "execa": "^0.8.0",
